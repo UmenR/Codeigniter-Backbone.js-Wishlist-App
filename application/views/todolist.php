@@ -13,9 +13,10 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
   <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>  -->
 
-
-
-<form id="form">
+  <!-- <div id="container">Loading...</div> -->
+  
+  <section id="view-tempate">
+    <form id="form">
     <!-- Form input fields here (do not forget your name attributes). -->
     title:<input type="text" name="title" id="title"> </br>
     priority:<input type="text" name="priority" id="priority"> </br>
@@ -23,43 +24,25 @@
     price:<input type="text" name="price" id="price"></br>
     <input type="hidden" name="userid" id="userid" value=4></br>
     <input type="submit" value="submit">
-</form>
+    </form>
+    <ol id="todo-list">
+    
+    </ol>
+  </section>
 
-
-
-
-
-  <div id="container">Loading...</div>
-  
-  <script type="text/template" id="view-tempate">
-  <ol>
-    <% _.each(this.collection.toJSON(),function(model){ %>
-       <li> <p>Title: <%= model.title%></p> </br>
-            <p>Priority:<%= model.priority%></p> </br>
-            <p>Price:<%= model.price%></p> </br>
-            <button>Clickme</button>
-        </li> 
-    <%}) %>
-  </ol>
+  <script type="text/template" id="item-template">
+    <div class="view">
+      <label>Title: <%= title%></label> </br>
+      <label>Priority:<%= priority%></label> </br>
+      <label>Price:<%= price%></label> </br>
+    </div>
+    
   </script>
 
   <script type="text/javascript">
 
   //
-    $("form").submit(function(e){
-    e.preventDefault();
-    var $inputs = $('#form :input');
-    var values = {};
-    $inputs.each(function() {
-        values[this.name] = $(this).val();
-    });
-    // console.log(values);
-    // TODO validations
-
-    var newmodel = new Todo({price:values.price,title:values.title,userid:values.userid,
-        url:values.url,priority:values.priority});
-    newmodel.save();
-    });
+    
 
 
 var Todo = Backbone.Model.extend({
@@ -72,11 +55,11 @@ var Todo = Backbone.Model.extend({
     data: model.toJSON(),
     success: function (object, status){
       console.log('Hooo');
-      TodoList.fetch({
+      todoList.fetch({
         success: function(response,xhr) {
             // _.each(response)
             // console.log(response);
-            toDoView.render();
+            // toDoView.render();
         },
         error: function (errorResponse) {
                console.log(errorResponse)
@@ -97,6 +80,14 @@ var Todo = Backbone.Model.extend({
   }
 });
 
+TodoitemView = Backbone.View.extend({
+      tagName: 'li',
+      template: _.template($('#item-template').html()),
+      render: function(){
+        this.$el.html(this.template(this.model.toJSON()));
+        return this; // enable chained calls
+      }
+    });
 
 
 var ToDoListCollection = Backbone.Collection.extend({
@@ -114,33 +105,62 @@ var ToDoListCollection = Backbone.Collection.extend({
         }	
       });
       
-      var TodoList = new ToDoListCollection();
+      var todoList = new ToDoListCollection();
             
-      TodoList.fetch({
-        success: function(response,xhr) {
-            // _.each(response)
-            // console.log(response);
-            toDoView.render();
-        },
-        error: function (errorResponse) {
-               console.log(errorResponse)
-        }
-      });
+    //   TodoList.fetch({
+    //     success: function(response,xhr) {
+    //         // _.each(response)
+    //         // console.log(response);
+    //         // toDoView.render();
+    //     },
+    //     error: function (errorResponse) {
+    //            console.log(errorResponse)
+    //     }
+    //   });
 
       var TodoView = Backbone.View.extend({
-        el: $('#container'),
-        collection:TodoList,
-        template: _.template($("#view-tempate").html()),
+        el: '#view-tempate',
+        // template: _.template($("#view-tempate").html()),
         initialize: function(){
-            this.render();
+            this.form = this.$('#form')
+            todoList.on('add', this.addAll, this);
+            todoList.on('reset', this.addAll, this);
+            todoList.fetch();
             
         },
-        render: function(){
-            this.$el.html(this.template({
-                collection:this.collection.toJSON()
-            }));
-            console.log(this.collection.toJSON());
+        events: {
+            'submit #form': 'createNewTodo'
+        },
+        createNewTodo: function(e){
+            
+            e.preventDefault();
+            var $inputs = $('#form :input');
+            var values = {};
+            $inputs.each(function() {
+            values[this.name] = $(this).val();
+            });
+            // TODO validations
+
+            var newmodel = new Todo({price:values.price,title:values.title,userid:values.userid,
+            url:values.url,priority:values.priority});
+            $('#form').find("input[type=text]").val("");    
+            // newmodel.save();
+        },
+        addOne: function(todo) {
+            // console.log(todo);
+            var view = new TodoitemView({model: todo});
+            $('#todo-list').append(view.render().el);
+        },
+        addAll: function() {
+            this.$('#todo-list').html(''); // clean the todo list
+            todoList.each(this.addOne, this);
         }
+        // render: function(){
+        //     this.$el.html(this.template({
+        //         collection:this.collection.toJSON()
+        //     }));
+        //     console.log(this.collection.toJSON());
+        // }
     });
     var toDoView = new TodoView();
       
@@ -148,3 +168,5 @@ var ToDoListCollection = Backbone.Collection.extend({
   
 </body>
 </html>
+
+ 
