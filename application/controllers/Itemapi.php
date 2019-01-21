@@ -11,6 +11,10 @@ class Itemapi extends REST_Controller {
         $this->load->model('Item_Model', 'im');
     }
 
+    function index_get(){
+        $this->load->view('todolist');
+    }
+
     function item_post() {
         if (!$this->post('title') || !$this->post('price')||!$this->post('priority')||!$this->post('url')
             ||!$this->post('userid')) {

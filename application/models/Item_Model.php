@@ -6,8 +6,8 @@ class Item_Model extends CI_Model {
 
     private $Item = 'Item';
 
-    function get_items() {
-        $query = $this->db->get($this->Item);
+    function get_items($userid) {
+        $query = $this->db->get_where($this->Item, array("userid" => $userid));
         if ($query) {
             return $query->result();
         }
