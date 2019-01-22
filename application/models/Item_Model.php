@@ -25,8 +25,9 @@ class Item_Model extends CI_Model {
     function add_item($title,$url,$price,$priority,$userid) {
         $query = $this->db->insert($this->Item, 
         array("title" => $title,"url" => $url, "price" => $price, "priority" => $priority, "userid"=> $userid));
-        if ($query) {
-            return $query;
+        $insert_id = $this->db->insert_id();
+        if ($insert_id) {
+            return $insert_id;
         }
         return NULL;
     }

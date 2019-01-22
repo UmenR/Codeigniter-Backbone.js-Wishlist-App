@@ -8,9 +8,6 @@
   <link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">
 
   <style type="text/css">
-    #todoapp ul {
-      list-style-type: none; /* Hides bullet points from todo list */
-    }
     #todo-list form.edit {
       display: none; /* Hides input box*/
     }
@@ -28,7 +25,7 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
   <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>  -->
 
-  <!-- <div id="container">Loading...</div> -->
+  <!-- <div id="container"></div> -->
   
   <section id="view-tempate">
     <form id="form">
@@ -54,7 +51,6 @@
     </div>
     
     <form class="edit" id="editForm">
-        <!-- Form input fields here (do not forget your name attributes). -->
         title:<input type="text"  name="title" value="<%= title%>" id="title"> </br>
         priority:<input type="text"  name="priority" value="<%= priority%>" id="priority"> </br>
         price:<input type="text"  name="price" value="<%= price%>" id="price"></br>
@@ -72,28 +68,46 @@
 
 
 var Todo = Backbone.Model.extend({
-    save: function (options){
+    save: function (attributes,options){
     var model = this;
-    // console.log(model.toJSON());
-    // console.log(model.isNew())
     if (model.isNew()){
         $.ajax({
             url:'http://localhost:8081/CWK2/index.php/itemapi/item',
             type:'POST',
             dataType: 'json',
             data: model.toJSON(),
-            success: function (object, status){
-            console.log('Hooo');
-            todoList.fetch();
+            success: function (inserid, status){
+            model.set({id:inserid});
+            model.fetch({
+                    url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
+                    success:function(){
+                      todoList.add(model);
+                    }
+                });
             },
             error: function (errorResponse) {
-                console.log('ERRR');
                     console.log(errorResponse)
                 }
         });
-        // console.log('New');
     } else {
-        console.log('Not new');
+      console.log(attributes);
+      $.ajax({
+            url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
+            type:'PUT',
+            dataType: 'json',
+            data: attributes,
+            success: function (inserid, status){
+            model.fetch({
+                    url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
+                    success:function(){
+                      toDoView.addAll();
+                    }
+                });
+            },
+            error: function (errorResponse) {
+                    console.log(errorResponse)
+                }
+        });
     }
     },
     defaults:{
@@ -118,7 +132,6 @@ TodoitemView = Backbone.View.extend({
       events : {
         'dblclick label' : 'edit',
         'submit #editForm' : 'updateOnEnter',
-        'blur .edit' : 'close',
         'click .remove': 'remove'
       },
       edit: function(){
@@ -133,7 +146,7 @@ TodoitemView = Backbone.View.extend({
         this.$el.removeClass('editing');
       },
       updateOnEnter: function(e){
-        //   console.log('inupdate');
+          console.log('inupdate');
             e.preventDefault();
             var $inputs = this.$('.edit :input');
             var values = {};
@@ -142,25 +155,22 @@ TodoitemView = Backbone.View.extend({
             });
             // TODO validations
             console.log(this.model);
-            console.log(values);
+            // console.log(values);
+            var cmodel = this.model;
             this.model.save({price:values.price,title:values.title,
             url:values.url,priority:values.priority},
-            {url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id'),
-                success: function (object, status){
-                console.log('Hooo');
-                todoList.fetch();
-            },
-            error: function (errorResponse) {
-                    console.log('ERRR');
-                    console.log(errorResponse)
-            }});
+            {url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id')});
             this.$el.removeClass('editing');
        },
        remove: function(){
+            var modelToremove = this.model;
             this.model.destroy({url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id'),
                 success: function (object, status){
-                console.log('Hooo');
-                todoList.fetch();
+                // console.log(modelToremove);
+                todoList.remove(modelToremove);
+                toDoView.addAll();
+                // console.log('Hooo');
+                // todoList.fetch();
             },
             error: function (errorResponse) {
                     console.log('ERRR');
@@ -171,32 +181,12 @@ TodoitemView = Backbone.View.extend({
 
 
 var ToDoListCollection = Backbone.Collection.extend({
-        
         mdoel:Todo,
         url: 'http://localhost:8081/CWK2/index.php/itemapi/items/userid/4',
-        
-        initialize: function () {
-          // this.bind("reset", function (model, options) {
-          //   console.log("Inside event");
-          //   console.log(model);
-            
-          // });
-        //   console.log('Initializing')
-        }	
       });
-      
-      var todoList = new ToDoListCollection();
+var todoList = new ToDoListCollection();
             
-    //   TodoList.fetch({
-    //     success: function(response,xhr) {
-    //         // _.each(response)
-    //         // console.log(response);
-    //         // toDoView.render();
-    //     },
-    //     error: function (errorResponse) {
-    //            console.log(errorResponse)
-    //     }
-    //   });
+    
 
       var TodoView = Backbone.View.extend({
         el: '#view-tempate',
@@ -227,20 +217,14 @@ var ToDoListCollection = Backbone.Collection.extend({
             newmodel.save();
         },
         addOne: function(todo) {
-            // console.log(todo.isNew());
+            console.log(todo);
             var view = new TodoitemView({model: todo});
             $('#todo-list').append(view.render().el);
         },
         addAll: function() {
             this.$('#todo-list').html(''); // clean the todo list
             todoList.each(this.addOne, this);
-        }
-        // render: function(){
-        //     this.$el.html(this.template({
-        //         collection:this.collection.toJSON()
-        //     }));
-        //     console.log(this.collection.toJSON());
-        // }
+        },
     });
     var toDoView = new TodoView();
       
