@@ -6,6 +6,21 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">
+
+  <style type="text/css">
+    #todoapp ul {
+      list-style-type: none; /* Hides bullet points from todo list */
+    }
+    #todo-list form.edit {
+      display: none; /* Hides input box*/
+    }
+    #todo-list .editing label {
+      display: none; /* Hides label text when .editing*/
+    }    
+    #todo-list .editing form.edit {
+      display: inline; /* Shows input text box when .editing*/
+    }    
+  </style> 
 </head>
 <body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
@@ -35,7 +50,18 @@
       <label>Title: <%= title%></label> </br>
       <label>Priority:<%= priority%></label> </br>
       <label>Price:<%= price%></label> </br>
+      <button class="remove">remove</button>
     </div>
+    
+    <form class="edit" id="editForm">
+        <!-- Form input fields here (do not forget your name attributes). -->
+        title:<input type="text"  name="title" value="<%= title%>" id="title"> </br>
+        priority:<input type="text"  name="priority" value="<%= priority%>" id="priority"> </br>
+        price:<input type="text"  name="price" value="<%= price%>" id="price"></br>
+        <input type="hidden"  name="url" id="url" value="changedurl"></br>
+        <input type="hidden"  name="userid" id="userid" value=4></br>
+        <input type="submit" value="save">
+    </form>
     
   </script>
 
@@ -47,46 +73,100 @@
 
 var Todo = Backbone.Model.extend({
     save: function (options){
-  var model = this;
-  $.ajax({
-    url:'http://localhost:8081/CWK2/index.php/itemapi/item',
-    type:'POST',
-    dataType: 'json',
-    data: model.toJSON(),
-    success: function (object, status){
-      console.log('Hooo');
-      todoList.fetch({
-        success: function(response,xhr) {
-            // _.each(response)
-            // console.log(response);
-            // toDoView.render();
-        },
-        error: function (errorResponse) {
-               console.log(errorResponse)
-        }
-      });
+    var model = this;
+    // console.log(model.toJSON());
+    // console.log(model.isNew())
+    if (model.isNew()){
+        $.ajax({
+            url:'http://localhost:8081/CWK2/index.php/itemapi/item',
+            type:'POST',
+            dataType: 'json',
+            data: model.toJSON(),
+            success: function (object, status){
+            console.log('Hooo');
+            todoList.fetch();
+            },
+            error: function (errorResponse) {
+                console.log('ERRR');
+                    console.log(errorResponse)
+                }
+        });
+        // console.log('New');
+    } else {
+        console.log('Not new');
+    }
     },
-    error: function (errorResponse) {
-        console.log('ERRR');
-               console.log(errorResponse)
-        }
-})
-},
-  defaults:{
-    title:"",
-    priority:1,
-    price:0,
-    userid:4
-  }
+    defaults:{
+        title:"",
+        priority:1,
+        price:0,
+        userid:4
+    }
 });
 
 TodoitemView = Backbone.View.extend({
       tagName: 'li',
       template: _.template($('#item-template').html()),
+      initialize: function(){
+        this.model.on('change', this.render, this);
+      },
       render: function(){
         this.$el.html(this.template(this.model.toJSON()));
+        this.editForm = this.$('#editForm');
         return this; // enable chained calls
-      }
+      },
+      events : {
+        'dblclick label' : 'edit',
+        'submit #editForm' : 'updateOnEnter',
+        'blur .edit' : 'close',
+        'click .remove': 'remove'
+      },
+      edit: function(){
+        this.$el.addClass('editing');
+        this.editForm.focus();
+      },
+      close: function(){
+        // var value = this.input.val().trim();
+        // if(value) {
+        //   this.model.save({title: value});
+        // }
+        this.$el.removeClass('editing');
+      },
+      updateOnEnter: function(e){
+        //   console.log('inupdate');
+            e.preventDefault();
+            var $inputs = this.$('.edit :input');
+            var values = {};
+            $inputs.each(function() {
+            values[this.name] = $(this).val();
+            });
+            // TODO validations
+            console.log(this.model);
+            console.log(values);
+            this.model.save({price:values.price,title:values.title,
+            url:values.url,priority:values.priority},
+            {url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id'),
+                success: function (object, status){
+                console.log('Hooo');
+                todoList.fetch();
+            },
+            error: function (errorResponse) {
+                    console.log('ERRR');
+                    console.log(errorResponse)
+            }});
+            this.$el.removeClass('editing');
+       },
+       remove: function(){
+            this.model.destroy({url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id'),
+                success: function (object, status){
+                console.log('Hooo');
+                todoList.fetch();
+            },
+            error: function (errorResponse) {
+                    console.log('ERRR');
+                    console.log(errorResponse)
+            }});
+       }       
     });
 
 
@@ -144,10 +224,10 @@ var ToDoListCollection = Backbone.Collection.extend({
             var newmodel = new Todo({price:values.price,title:values.title,userid:values.userid,
             url:values.url,priority:values.priority});
             $('#form').find("input[type=text]").val("");    
-            // newmodel.save();
+            newmodel.save();
         },
         addOne: function(todo) {
-            // console.log(todo);
+            // console.log(todo.isNew());
             var view = new TodoitemView({model: todo});
             $('#todo-list').append(view.render().el);
         },

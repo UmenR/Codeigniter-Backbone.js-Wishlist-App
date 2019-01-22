@@ -69,6 +69,9 @@ class Itemapi extends REST_Controller {
     function item_put(){
         if (!$this->put('title') || !$this->put('price')||!$this->put('priority')||!$this->put('url')||
         !$this->get('id')) {
+            print_r($this->put());
+            print_r($this->post());
+            print_r($this->get());
             $this->response('Bad Request!', 400);
         } else {
             $title = $this->put('title');
