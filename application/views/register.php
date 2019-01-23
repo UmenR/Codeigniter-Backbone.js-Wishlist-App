@@ -20,8 +20,8 @@
 
   <div id="form-container">
   <form id="registerForm">
-        Username:<input type="text"  name="username" id="username"> </br>
-        Password:<input type="password"  name="password"  id="password"> </br>
+        Username:<input type="text"  name="username" id="username" required> </br>
+        Password:<input type="password"  name="password"  id="password" required> </br>
         List Title:<input type="text"  name="listtitle"  id="listtitle"></br>
         List Description:<input type="text"  name="listdescription"  id="listdescription"></br>
         <input type="submit" value="register">
@@ -39,7 +39,6 @@
             dataType: 'json',
             data: model.toJSON(),
             success:function(userid){
-                
                 location.href="http://localhost:8081/CWK2/index.php/userapi/login";
             },
             error: function (errorResponse) {

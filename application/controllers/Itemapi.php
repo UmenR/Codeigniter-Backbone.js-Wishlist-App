@@ -17,6 +17,7 @@ class Itemapi extends REST_Controller {
     }
 
     function item_post() {
+        if($this->session->userdata('is_logged_in')) { 
         if (!$this->post('title') || !$this->post('price')||!$this->post('priority')||!$this->post('url')
             ||!$this->post('userid')) {
             $this->response('Bad Request !', 400);
@@ -35,9 +36,13 @@ class Itemapi extends REST_Controller {
                 $this->response('Ooops! Something went wrong!', 401); // Not authorized
             }
         }
+      } else {
+        $this->response('Access denied please login!', 401);
+      }
     }
 
     function item_get() {
+        if($this->session->userdata('is_logged_in')) {
         if($this->get('id')){
             $itemid = $this->get('id');
             $item = $this->im->get_item($itemid);
@@ -50,9 +55,13 @@ class Itemapi extends REST_Controller {
         } else {
             $this->response('Bad Request!', 400);
         }
+      } else {
+        $this->response('Access denied please login!', 401);
+      }
     }
 
     function items_get() {
+        if($this->session->userdata('is_logged_in')) {
         if($this->get('userid')){
             $userid = $this->get('userid');
             $items = $this->im->get_items($userid);
@@ -65,9 +74,13 @@ class Itemapi extends REST_Controller {
         } else {
             $this->response('Bad Request!', 400);
         }
+      } else {
+        $this->response('Access denied please login!', 401);
+      }
     }
         
     function item_put(){
+        if($this->session->userdata('is_logged_in')){
         if (!$this->put('title') || !$this->put('price')||!$this->put('priority')||!$this->put('url')||
         !$this->get('id')) {
             $this->response('Bad Request!', 400);
@@ -86,9 +99,13 @@ class Itemapi extends REST_Controller {
                 $this->response('Ooops! Something went wrong!', 401); // Not authorized
             }
         }
+      }else {
+        $this->response('Access denied please login!', 401);
+      }
     }
 
     function item_delete(){
+        if($this->session->userdata('is_logged_in')){
         if(!$this->get('id')){
             $this->response('Bad Request!', 400);
         }else{
@@ -100,6 +117,9 @@ class Itemapi extends REST_Controller {
                 $this->response('Ooops! Something went wrong!', 401); // Not authorized
             }
         }
+      }else{
+        $this->response('Access denied please login!', 401);
+      }
     }
     }
 

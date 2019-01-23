@@ -60,6 +60,12 @@ class Userapi extends REST_Controller {
             $user = $this->um->get_user($username,$hashed);
 
             if ($user) {
+                $sessiondata = array(
+                    'username' => $user->username,
+                    'id' => $user->id,
+                    'is_logged_in' => 'true'
+                );
+                $this->session->set_userdata($sessiondata);
                 $this->response($user, 200); // 200 being the HTTP response code
             } else {
                 $this->response('Invalid Credentials!', 401); // Not authorized

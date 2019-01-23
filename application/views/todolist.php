@@ -39,8 +39,8 @@
   <div id="nolist" hidden>
   <h3>Create a List to add items!</h3>
   <form id="nolistForm">
-  title:<input type="text" name="listtitle" id="listtitle"> </br>
-  description:<input type="text" name="listdescription" id="listdescription"> </br>
+  title:<input type="text" name="listtitle" id="listtitle" required> </br>
+  description:<input type="text" name="listdescription" id="listdescription" required> </br>
   <input type="hidden" name="listuserid" id="listuserid" value=""></br>
   <input type="submit" value="submit">
   </form>
@@ -48,14 +48,13 @@
 
 
 
-  <section id="view-tempate">
+  <section id="AppView" hidden>
     <form id="form">
-    <!-- Form input fields here (do not forget your name attributes). -->
-    title:<input type="text" name="title" id="title"> </br>
-    priority:<input type="text" name="priority" id="priority"> </br>
-    url:<input type="text" name="url" id="url"></br>
-    price:<input type="text" name="price" id="price"></br>
-    <input type="hidden" name="userid" id="mainuserid" value=""></br>
+    title:<input type="text" name="title" id="title" required> </br>
+    priority:<input type="text" name="priority" id="priority" required> </br>
+    url:<input type="text" name="url" id="url" required></br>
+    price:<input type="text" name="price" id="price" required></br>
+    <input type="hidden" name="userid" id="mainuserid" value="" required></br>
     <input type="submit" value="submit">
     </form>
     <ol id="todo-list">
@@ -72,73 +71,37 @@
     </div>
     
     <form class="edit" id="editForm">
-        title:<input type="text"  name="title" value="<%= title%>" id="title"> </br>
-        priority:<input type="text"  name="priority" value="<%= priority%>" id="priority"> </br>
-        price:<input type="text"  name="price" value="<%= price%>" id="price"></br>
-        <input type="hidden"  name="url" id="url" value="changedurl"></br>
-        <input type="hidden"  name="userid" id="edituserid" value="" ></br>
+        title:<input type="text"  name="title" value="<%= title%>" id="title" required> </br>
+        priority:<input type="text"  name="priority" value="<%= priority%>" id="priority" required> </br>
+        price:<input type="text"  name="price" value="<%= price%>" id="price" required></br>
+        <input type="hidden"  name="url" id="url" value="changedurl" required></br>
+        <input type="hidden"  name="userid" id="edituserid" value="" required></br>
         <input type="submit" value="save">
     </form>
     
   </script>
 
-  <script type="text/javascript">
+<script type="text/javascript">
 var app ={};
-  //
+
 app.globuserid = sessionStorage.todoappUserid;
 app.globusername = sessionStorage.todoappUsername;
 app.globlistcreated = sessionStorage.todoappUserlistcreated;
 app.globlisttitle = sessionStorage.todoappUsertitle;
 app.globlistdescription = sessionStorage.todoappUserdesc;
 
+if(app.globuserid){
 document.getElementById("mainuserid").value = app.globuserid;
 document.getElementById("loggedinuser").innerHTML = "Welcome! "+app.globusername;
 document.getElementById("titlelist").innerHTML = app.globlisttitle;
-document.getElementById("descriptionlist").innerHTML = globlistdescription;
+document.getElementById("descriptionlist").innerHTML = app.globlistdescription;
+} else {
+  location.href="http://localhost:8081/CWK2/index.php/userapi/login";
+}
 
 
-var User = Backbone.Model.extend({
-    save: function (attributes,options){
-    var model = this;
-    if(model.isNew()){
-        $.ajax({
-            url:'http://localhost:8081/CWK2/index.php/userapi/register',
-            type:'POST',
-            dataType: 'json',
-            data: model.toJSON(),
-            success:function(userid){  
-                location.href="http://localhost:8081/CWK2/index.php/userapi/login";
-            },
-            error: function (errorResponse) {
-                    console.log(errorResponse)
-                }
-        });
-    } else {
-      $.ajax({
-            url:'http://localhost:8081/CWK2/index.php/userapi/register',
-            type:'PUT',
-            dataType: 'json',
-            data: model.toJSON(),
-            success:function(userid){
-                location.href="http://localhost:8081/CWK2/index.php/userapi/login";
-            },
-            error: function (errorResponse) {
-                    console.log(errorResponse)
-                }
-        });
-    }
-    },
-    defaults:{
-        username:"",
-        password:"",
-        listcreated:0,
-        listtitle:"",
-        listdescription:""
-    }
-    });
 
-
-var Todo = Backbone.Model.extend({
+app.Item = Backbone.Model.extend({
     save: function (attributes,options){
     var model = this;
     if (model.isNew()){
@@ -152,8 +115,8 @@ var Todo = Backbone.Model.extend({
             model.fetch({
                     url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
                     success:function(){
-                      todoList.add(model);
-                      toDoView.addAll();
+                      app.itemList.add(model);
+                      app.itemView.addAll();
                     }
                 });
             },
@@ -171,7 +134,7 @@ var Todo = Backbone.Model.extend({
             model.fetch({
                     url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
                     success:function(){
-                      toDoView.addAll();
+                      app.itemView.addAll();
                     }
                 });
             },
@@ -189,7 +152,7 @@ var Todo = Backbone.Model.extend({
     }
 });
 
-TodoitemView = Backbone.View.extend({
+app.ItemView = Backbone.View.extend({
       tagName: 'li',
       template: _.template($('#item-template').html()),
       initialize: function(){
@@ -209,15 +172,7 @@ TodoitemView = Backbone.View.extend({
         this.$el.addClass('editing');
         this.editForm.focus();
       },
-      close: function(){
-        // var value = this.input.val().trim();
-        // if(value) {
-        //   this.model.save({title: value});
-        // }
-        this.$el.removeClass('editing');
-      },
       updateOnEnter: function(e){
-          console.log('inupdate');
             e.preventDefault();
             var $inputs = this.$('.edit :input');
             var values = {};
@@ -225,9 +180,7 @@ TodoitemView = Backbone.View.extend({
             values[this.name] = $(this).val();
             });
             // TODO validations
-            console.log(this.model);
-            // console.log(values);
-            var cmodel = this.model;
+            
             this.model.save({price:values.price,title:values.title,
             url:values.url,priority:values.priority},
             {url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id')});
@@ -237,41 +190,35 @@ TodoitemView = Backbone.View.extend({
             var modelToremove = this.model;
             this.model.destroy({url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id'),
                 success: function (object, status){
-                // console.log(modelToremove);
-                todoList.remove(modelToremove);
-                toDoView.addAll();
-                // console.log('Hooo');
-                // todoList.fetch();
+                app.itemList.remove(modelToremove);
+                app.itemView.addAll();
             },
             error: function (errorResponse) {
-                    console.log('ERRR');
                     console.log(errorResponse)
             }});
        }       
     });
 
 
-var ToDoListCollection = Backbone.Collection.extend({
-        mdoel:Todo,
+app.ItemListCollection = Backbone.Collection.extend({
+        mdoel:app.Item,
         url: 'http://localhost:8081/CWK2/index.php/itemapi/items/userid/'+ app.globuserid,
       });
-var todoList = new ToDoListCollection();
+app.itemList = new app.ItemListCollection();
             
-      var TodoView = Backbone.View.extend({
-        el: '#view-tempate',
-        // template: _.template($("#view-tempate").html()),
+      app.ItemsView = Backbone.View.extend({
+        el: '#AppView',
         initialize: function(){
-          console.log('isglobcreated');
-          console.log(app.globlistcreated);
           if(app.globlistcreated == 1) {
+            document.getElementById("AppView").hidden = false;
             this.form = this.$('#form');
-            todoList.fetch().then(
+            app.itemList.fetch().then(
               function(){
-                toDoView.addAll();
+                app.itemView.addAll();
               });
-          } else {
+          } else if (app.globuserid) {
             document.getElementById("nolist").hidden = false;
-            document.getElementById("form").hidden = true;
+            document.getElementById("AppView").hidden = true;
             $( "#nolistForm" ).submit(function( event ) {
               event.preventDefault();
               var $inputs = $('#nolistForm :input');
@@ -286,10 +233,10 @@ var todoList = new ToDoListCollection();
                 data: values,
                 success:function(userid){
                   document.getElementById("nolist").hidden = true;
-                  document.getElementById("form").hidden = false;
+                  document.getElementById("AppView").hidden = false;
                   document.getElementById("titlelist").innerHTML = values.listtitle;
                   document.getElementById("descriptionlist").innerHTML = values.listdescription;
-                  
+
                   sessionStorage.todoappUserlistcreated = 1;
                   sessionStorage.todoappUsertitle = values.listtitle;
                   sessionStorage.todoappUserdesc = values.listdescription;
@@ -314,22 +261,21 @@ var todoList = new ToDoListCollection();
             });
             // TODO validations
 
-            var newmodel = new Todo({price:values.price,title:values.title,userid:values.userid,
+            var newmodel = new app.Item({price:values.price,title:values.title,userid:values.userid,
             url:values.url,priority:values.priority});
             $('#form').find("input[type=text]").val("");    
             newmodel.save();
         },
         addOne: function(todo) {
-            console.log(todo);
-            var view = new TodoitemView({model: todo});
+            var view = new app.ItemView({model: todo});
             $('#todo-list').append(view.render().el);
         },
         addAll: function() {
             this.$('#todo-list').html(''); // clean the todo list
-            todoList.each(this.addOne, this);
+            app.itemList.each(this.addOne, this);
         },
     });
-    var toDoView = new TodoView();
+    app.itemView = new app.ItemsView();
       
   </script>
   

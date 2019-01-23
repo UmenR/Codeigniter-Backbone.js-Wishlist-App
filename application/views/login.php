@@ -20,10 +20,11 @@
 
   <div id="form-container">
   <form id="loginForm">
-        Username:<input type="text"  name="username" id="username"> </br>
-        Password:<input type="password"  name="password"  id="password"> </br>
+        Username:<input type="text"  name="username" id="username" required> </br>
+        Password:<input type="password"  name="password"  id="password" required> </br>
+        <label id="validationErrors" hidden>Invalid credentials please Re-enter</label> </br>
         <input type="submit" value="register">
-    </form>
+  </form>
   </div>
   
   
@@ -40,20 +41,15 @@
                 // create user model
                 //Save to local storage and retrieve from next page ?
                 // for now we shall create a global variable
-                // console.log(newmodel);
-                // window.loggedinuser = new User(userdata)
-                // console.log('userid');
-                console.log(userdata.id);
                 sessionStorage.todoappUserid = userdata.id;
                 sessionStorage.todoappUsername = userdata.username;
                 sessionStorage.todoappUserlistcreated = userdata.listcreated;
                 sessionStorage.todoappUsertitle = userdata.listtitle;
-                sessionStorage.todoappUserdesc = userdata.listdescription;    
-                // console.log(userdata);
+                sessionStorage.todoappUserdesc = userdata.listdescription;
                 location.href="http://localhost:8081/CWK2/index.php/itemapi/index";
             },
             error: function (errorResponse) {
-                    console.log(errorResponse)
+                  document.getElementById("validationErrors").hidden=false;
                 }
         });
     },
@@ -69,10 +65,8 @@
     var userLoginModel = null;
 
     $( "#loginForm" ).submit(function( event ) {
-        // alert( "Handler for .submit() called." );
+        document.getElementById("validationErrors").hidden=true;
         event.preventDefault();
-        // TOD validations
-
         var $inputs = $('#loginForm :input');
             var values = {};
             $inputs.each(function() {
@@ -80,7 +74,7 @@
             });
 
         var newmodel = new User({username:values.username,password:values.password});
-            $('#loginForm').find("input[type=text]").val("");    
+            $('#loginForm').trigger('reset');    
             newmodel.save();
     });
   </script>
