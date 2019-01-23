@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">
 </head>
 <body>
-  <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script> -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+ <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script> -->
+ <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
   
   <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script> -->
   <script src="https://underscorejs.org/underscore-min.js" type="text/javascript"></script>
@@ -19,9 +19,11 @@
   <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>  -->
 
   <div id="form-container">
-  <form id="loginForm">
+  <form id="registerForm">
         Username:<input type="text"  name="username" id="username"> </br>
         Password:<input type="password"  name="password"  id="password"> </br>
+        List Title:<input type="text"  name="listtitle"  id="listtitle"></br>
+        List Description:<input type="text"  name="listdescription"  id="listdescription"></br>
         <input type="submit" value="register">
     </form>
   </div>
@@ -32,25 +34,13 @@
     save: function (attributes,options){
     var model = this;
         $.ajax({
-            url:'http://localhost:8081/CWK2/index.php/userapi/login',
+            url:'http://localhost:8081/CWK2/index.php/userapi/register',
             type:'POST',
             dataType: 'json',
             data: model.toJSON(),
-            success:function(userdata){
-                // create user model
-                //Save to local storage and retrieve from next page ?
-                // for now we shall create a global variable
-                // console.log(newmodel);
-                // window.loggedinuser = new User(userdata)
-                // console.log('userid');
-                console.log(userdata.id);
-                sessionStorage.todoappUserid = userdata.id;
-                sessionStorage.todoappUsername = userdata.username;
-                sessionStorage.todoappUserlistcreated = userdata.listcreated;
-                sessionStorage.todoappUsertitle = userdata.listtitle;
-                sessionStorage.todoappUserdesc = userdata.listdescription;    
-                // console.log(userdata);
-                location.href="http://localhost:8081/CWK2/index.php/itemapi/index";
+            success:function(userid){
+                
+                location.href="http://localhost:8081/CWK2/index.php/userapi/login";
             },
             error: function (errorResponse) {
                     console.log(errorResponse)
@@ -65,22 +55,21 @@
         listdescription:""
     }
     });
-    
-    var userLoginModel = null;
 
-    $( "#loginForm" ).submit(function( event ) {
+    $( "#registerForm" ).submit(function( event ) {
         // alert( "Handler for .submit() called." );
         event.preventDefault();
         // TOD validations
 
-        var $inputs = $('#loginForm :input');
+        var $inputs = $('#registerForm :input');
             var values = {};
             $inputs.each(function() {
             values[this.name] = $(this).val();
             });
 
-        var newmodel = new User({username:values.username,password:values.password});
-            $('#loginForm').find("input[type=text]").val("");    
+        var newmodel = new User({username:values.username,password:values.password,listtitle:values.listtitle,
+            listdescription:values.listdescription});
+            $('#registerForm').find("input[type=text]").val("");    
             newmodel.save();
     });
   </script>

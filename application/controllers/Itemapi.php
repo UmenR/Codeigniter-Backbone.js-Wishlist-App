@@ -12,6 +12,7 @@ class Itemapi extends REST_Controller {
     }
 
     function index_get(){
+        // Remember to only send if logged in!
         $this->load->view('todolist');
     }
 

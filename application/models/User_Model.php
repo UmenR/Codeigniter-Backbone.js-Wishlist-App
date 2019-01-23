@@ -24,6 +24,7 @@ class User_Model extends CI_Model {
     }
 
     function get_user($username,$password) {
+        $this->db->select('username, listcreated, listtitle, listdescription,id');
         $query = $this->db->get_where($this->user, array("username" => $username,"password" => $password));
         if ($query) {
             return $query->row();
@@ -31,10 +32,17 @@ class User_Model extends CI_Model {
         return NULL;
     }
 
-    function add_user($username,$password) {
-        $query = $this->db->insert($this->user, array("username" => $username,"password" => $password));
-        if ($query) {
-            return $query;
+    function add_user($username,$password,$listtitle,$listdescription) {
+        if($listtitle && $listdescription){
+            $query = $this->db->insert($this->user, array("username" => $username,"password" => $password,
+            "listtitle" => $listtitle, "listdescription" =>$listdescription,"listcreated"=>1));    
+        } else {
+            $query = $this->db->insert($this->user, array("username" => $username,"password" => $password,
+            "listtitle" => "", "listdescription" =>"","listcreated"=>1));
+        }
+        $insert_id = $this->db->insert_id();
+        if ($insert_id) {
+            return $insert_id;
         }
         return NULL;
     }

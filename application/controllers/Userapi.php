@@ -26,7 +26,12 @@ class Userapi extends REST_Controller {
     function login_get(){
         $this->load->view('login');
     }
-    function user_post() {
+
+    function register_get(){
+        $this->load->view('register');
+    }
+
+    function login_post() {
         if (!$this->post('username') || !$this->post('password')) {
             $this->response(NULL, 400);
         } else {
@@ -48,23 +53,28 @@ class Userapi extends REST_Controller {
     function register_post() {
         $username = $this->post('username');
         $password = $this->post('password');
+        $listtitle = $this->post('listtitle');
+        $listdescription = $this->post('listdescription');
         
-        $does_exist = $this->um->is_username_unique($username);
+        // $does_exist = $this->um->is_username_unique($username);
 
-        if($does_exist){
-            $this->response('Username already exists!', 401);
-        }else {
+        // if($does_exist){
+        //     $this->response('Username already exists!', 401);
+        // }else {
             $salt = ('1ndf341endf13i9f2f3dmvnbc1k4');
             $hashed = hash('sha512',$password.$salt);
-            
-            $user = $this->um->add_user($username,$hashed);
+            if($listtitle && $listdescription){
+                $user = $this->um->add_user($username,$hashed,$listtitle,$listdescription);
+            } else {
+                $user = $this->um->add_user($username,$hashed);
+            }
             if ($user) {
                 $this->response($user, 200); // 200 being the HTTP response code
             } else {
                 // Todo show error !
                 $this->response('Invalid Credentials!', 401); // Not authorized
             }
-        }        
+        // }        
     }
 
 }

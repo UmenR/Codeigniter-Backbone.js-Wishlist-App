@@ -20,21 +20,27 @@
   </style> 
 </head>
 <body>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
+  <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script> -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+  
+  <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script> -->
+  <script src="https://underscorejs.org/underscore-min.js" type="text/javascript"></script>
+  
+  <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script> -->
+  <script src="http://backbonejs.org/backbone-min.js" type="text/javascript"></script>
   <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>  -->
 
   <!-- <div id="container"></div> -->
   
   <section id="view-tempate">
+  <h3 id="loggedinuser">Welcome</h3>
     <form id="form">
     <!-- Form input fields here (do not forget your name attributes). -->
     title:<input type="text" name="title" id="title"> </br>
     priority:<input type="text" name="priority" id="priority"> </br>
     url:<input type="text" name="url" id="url"></br>
     price:<input type="text" name="price" id="price"></br>
-    <input type="hidden" name="userid" id="userid" value=4></br>
+    <input type="hidden" name="userid" id="mainuserid" value=""></br>
     <input type="submit" value="submit">
     </form>
     <ol id="todo-list">
@@ -55,7 +61,7 @@
         priority:<input type="text"  name="priority" value="<%= priority%>" id="priority"> </br>
         price:<input type="text"  name="price" value="<%= price%>" id="price"></br>
         <input type="hidden"  name="url" id="url" value="changedurl"></br>
-        <input type="hidden"  name="userid" id="userid" value=4></br>
+        <input type="hidden"  name="userid" id="edituserid" value="" ></br>
         <input type="submit" value="save">
     </form>
     
@@ -64,7 +70,17 @@
   <script type="text/javascript">
 
   //
-    
+var globuserid = sessionStorage.todoappUserid;
+var globusername = sessionStorage.todoappUsername;
+var globlistcreated = sessionStorage.todoappUserlistcreated;
+var globlisttitle = sessionStorage.todoappUsertitle;
+var globlistdescription = sessionStorage.todoappUserdesc;
+
+document.getElementById("mainuserid").value = globuserid;
+document.getElementById("loggedinuser").innerHTML = "Welcome! "+globusername;
+// document.getElementById("edituserid").value = globuserid;
+// console.log('GLOB');
+// console.log(globuserid);
 
 
 var Todo = Backbone.Model.extend({
@@ -82,6 +98,7 @@ var Todo = Backbone.Model.extend({
                     url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
                     success:function(){
                       todoList.add(model);
+                      toDoView.addAll();
                     }
                 });
             },
@@ -90,7 +107,6 @@ var Todo = Backbone.Model.extend({
                 }
         });
     } else {
-      console.log(attributes);
       $.ajax({
             url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
             type:'PUT',
@@ -182,21 +198,19 @@ TodoitemView = Backbone.View.extend({
 
 var ToDoListCollection = Backbone.Collection.extend({
         mdoel:Todo,
-        url: 'http://localhost:8081/CWK2/index.php/itemapi/items/userid/4',
+        url: 'http://localhost:8081/CWK2/index.php/itemapi/items/userid/'+globuserid,
       });
 var todoList = new ToDoListCollection();
             
-    
-
       var TodoView = Backbone.View.extend({
         el: '#view-tempate',
         // template: _.template($("#view-tempate").html()),
         initialize: function(){
-            this.form = this.$('#form')
-            todoList.on('add', this.addAll, this);
-            todoList.on('reset', this.addAll, this);
-            todoList.fetch();
-            
+            this.form = this.$('#form');
+            todoList.fetch().then(
+              function(){
+                toDoView.addAll();
+              });
         },
         events: {
             'submit #form': 'createNewTodo'
