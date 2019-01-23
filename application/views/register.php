@@ -57,18 +57,19 @@
     });
 
     $( "#registerForm" ).submit(function( event ) {
-        // alert( "Handler for .submit() called." );
         event.preventDefault();
-        // TOD validations
-
         var $inputs = $('#registerForm :input');
             var values = {};
             $inputs.each(function() {
             values[this.name] = $(this).val();
             });
 
-        var newmodel = new User({username:values.username,password:values.password,listtitle:values.listtitle,
+        if(values.listtitle === "" || values.listdescription === ""){
+            var newmodel = new User({username:values.username,password:values.password});
+        } else {
+            var newmodel = new User({username:values.username,password:values.password,listtitle:values.listtitle,
             listdescription:values.listdescription});
+        }
             $('#registerForm').find("input[type=text]").val("");    
             newmodel.save();
     });

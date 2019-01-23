@@ -32,8 +32,23 @@
 
   <!-- <div id="container"></div> -->
   
+  <h3 id="loggedinuser"></h3>
+  <h4 id="titlelist"></h4>
+  <h4 id="descriptionlist"></h4>
+
+  <div id="nolist" hidden>
+  <h3>Create a List to add items!</h3>
+  <form id="nolistForm">
+  title:<input type="text" name="listtitle" id="listtitle"> </br>
+  description:<input type="text" name="listdescription" id="listdescription"> </br>
+  <input type="hidden" name="listuserid" id="listuserid" value=""></br>
+  <input type="submit" value="submit">
+  </form>
+  </div>
+
+
+
   <section id="view-tempate">
-  <h3 id="loggedinuser">Welcome</h3>
     <form id="form">
     <!-- Form input fields here (do not forget your name attributes). -->
     title:<input type="text" name="title" id="title"> </br>
@@ -68,19 +83,59 @@
   </script>
 
   <script type="text/javascript">
-
+var app ={};
   //
-var globuserid = sessionStorage.todoappUserid;
-var globusername = sessionStorage.todoappUsername;
-var globlistcreated = sessionStorage.todoappUserlistcreated;
-var globlisttitle = sessionStorage.todoappUsertitle;
-var globlistdescription = sessionStorage.todoappUserdesc;
+app.globuserid = sessionStorage.todoappUserid;
+app.globusername = sessionStorage.todoappUsername;
+app.globlistcreated = sessionStorage.todoappUserlistcreated;
+app.globlisttitle = sessionStorage.todoappUsertitle;
+app.globlistdescription = sessionStorage.todoappUserdesc;
 
-document.getElementById("mainuserid").value = globuserid;
-document.getElementById("loggedinuser").innerHTML = "Welcome! "+globusername;
-// document.getElementById("edituserid").value = globuserid;
-// console.log('GLOB');
-// console.log(globuserid);
+document.getElementById("mainuserid").value = app.globuserid;
+document.getElementById("loggedinuser").innerHTML = "Welcome! "+app.globusername;
+document.getElementById("titlelist").innerHTML = app.globlisttitle;
+document.getElementById("descriptionlist").innerHTML = globlistdescription;
+
+
+var User = Backbone.Model.extend({
+    save: function (attributes,options){
+    var model = this;
+    if(model.isNew()){
+        $.ajax({
+            url:'http://localhost:8081/CWK2/index.php/userapi/register',
+            type:'POST',
+            dataType: 'json',
+            data: model.toJSON(),
+            success:function(userid){  
+                location.href="http://localhost:8081/CWK2/index.php/userapi/login";
+            },
+            error: function (errorResponse) {
+                    console.log(errorResponse)
+                }
+        });
+    } else {
+      $.ajax({
+            url:'http://localhost:8081/CWK2/index.php/userapi/register',
+            type:'PUT',
+            dataType: 'json',
+            data: model.toJSON(),
+            success:function(userid){
+                location.href="http://localhost:8081/CWK2/index.php/userapi/login";
+            },
+            error: function (errorResponse) {
+                    console.log(errorResponse)
+                }
+        });
+    }
+    },
+    defaults:{
+        username:"",
+        password:"",
+        listcreated:0,
+        listtitle:"",
+        listdescription:""
+    }
+    });
 
 
 var Todo = Backbone.Model.extend({
@@ -198,7 +253,7 @@ TodoitemView = Backbone.View.extend({
 
 var ToDoListCollection = Backbone.Collection.extend({
         mdoel:Todo,
-        url: 'http://localhost:8081/CWK2/index.php/itemapi/items/userid/'+globuserid,
+        url: 'http://localhost:8081/CWK2/index.php/itemapi/items/userid/'+ app.globuserid,
       });
 var todoList = new ToDoListCollection();
             
@@ -206,11 +261,45 @@ var todoList = new ToDoListCollection();
         el: '#view-tempate',
         // template: _.template($("#view-tempate").html()),
         initialize: function(){
+          console.log('isglobcreated');
+          console.log(app.globlistcreated);
+          if(app.globlistcreated == 1) {
             this.form = this.$('#form');
             todoList.fetch().then(
               function(){
                 toDoView.addAll();
               });
+          } else {
+            document.getElementById("nolist").hidden = false;
+            document.getElementById("form").hidden = true;
+            $( "#nolistForm" ).submit(function( event ) {
+              event.preventDefault();
+              var $inputs = $('#nolistForm :input');
+              var values = {};
+              $inputs.each(function() {
+              values[this.name] = $(this).val();
+              });
+              $.ajax({
+                url:'http://localhost:8081/CWK2/index.php/userapi/user/id/'+ app.globuserid,
+                type:'PUT',
+                dataType: 'json',
+                data: values,
+                success:function(userid){
+                  document.getElementById("nolist").hidden = true;
+                  document.getElementById("form").hidden = false;
+                  document.getElementById("titlelist").innerHTML = values.listtitle;
+                  document.getElementById("descriptionlist").innerHTML = values.listdescription;
+                  
+                  sessionStorage.todoappUserlistcreated = 1;
+                  sessionStorage.todoappUsertitle = values.listtitle;
+                  sessionStorage.todoappUserdesc = values.listdescription;
+                },
+                error: function (errorResponse) {
+                        console.log(errorResponse)
+                    }
+            });
+            });
+          }
         },
         events: {
             'submit #form': 'createNewTodo'

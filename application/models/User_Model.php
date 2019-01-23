@@ -38,11 +38,21 @@ class User_Model extends CI_Model {
             "listtitle" => $listtitle, "listdescription" =>$listdescription,"listcreated"=>1));    
         } else {
             $query = $this->db->insert($this->user, array("username" => $username,"password" => $password,
-            "listtitle" => "", "listdescription" =>"","listcreated"=>1));
+            "listtitle" => "", "listdescription" =>"","listcreated"=>0));
         }
         $insert_id = $this->db->insert_id();
         if ($insert_id) {
             return $insert_id;
+        }
+        return NULL;
+    }
+
+    function update_user($id,$title,$description){
+        $data = array("listtitle" => $title,"listdescription" => $description,
+         "listcreated" => "1");
+        $query = $this->db->update($this->user,$data,"id =".$id);
+        if ($query) {
+            return $query;
         }
         return NULL;
     }

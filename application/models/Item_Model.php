@@ -15,7 +15,7 @@ class Item_Model extends CI_Model {
     }
 
     function get_item($itemid) {
-        $query = $this->db->get_where($this->Item, array("ID" => $itemid));
+        $query = $this->db->get_where($this->Item, array("id" => $itemid));
         if ($query) {
             return $query->row();
         }
@@ -34,8 +34,7 @@ class Item_Model extends CI_Model {
 
     function update_item($id,$title,$url,$price,$priority) {
         $data = array("title" => $title,"url" => $url, "price" => $price, "priority" => $priority);
-        // $this->db->where('ID',$id);
-        $query = $this->db->update($this->Item,$data,"ID =".$id);
+        $query = $this->db->update($this->Item,$data,"id =".$id);
         if ($query) {
             return $query;
         }
@@ -43,7 +42,7 @@ class Item_Model extends CI_Model {
     }
 
     function delete_item($id){
-        $query = $this->db->delete($this->Item,array('ID'=>$id));
+        $query = $this->db->delete($this->Item,array('id'=>$id));
         if ($query) {
             return $query;
         }

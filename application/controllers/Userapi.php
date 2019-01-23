@@ -23,6 +23,23 @@ class Userapi extends REST_Controller {
         }
     }
 
+    function user_put(){
+        if (!$this->put('listtitle') || !$this->put('listdescription') || !$this->get('id')) {
+            $this->response(NULL, 400);
+        } else {
+            $id = $this->get('id');
+            $title = $this->put('listtitle');
+            $description = $this->put('listdescription');
+            $user = $this->um->update_user($id,$title,$description);
+
+            if ($user) {
+                $this->response($user, 200); // 200 being the HTTP response code
+            } else {
+                $this->response('Invalid Credentials!', 401); // Not authorized
+            }
+        }
+    }
+
     function login_get(){
         $this->load->view('login');
     }
@@ -53,28 +70,26 @@ class Userapi extends REST_Controller {
     function register_post() {
         $username = $this->post('username');
         $password = $this->post('password');
-        $listtitle = $this->post('listtitle');
-        $listdescription = $this->post('listdescription');
-        
-        // $does_exist = $this->um->is_username_unique($username);
+        $listtitle = NULL;
+        $listdescription = NULL;
+        if($this->post('listtitle') && $this->post('listdescription')){
+            $listtitle = $this->post('listtitle');
+            $listdescription = $this->post('listdescription');
+        }
 
-        // if($does_exist){
-        //     $this->response('Username already exists!', 401);
-        // }else {
             $salt = ('1ndf341endf13i9f2f3dmvnbc1k4');
             $hashed = hash('sha512',$password.$salt);
-            if($listtitle && $listdescription){
+            // if($listtitle && $listdescription){
                 $user = $this->um->add_user($username,$hashed,$listtitle,$listdescription);
-            } else {
-                $user = $this->um->add_user($username,$hashed);
-            }
+            // } else {
+                // $user = $this->um->add_user($username,$hashed,);
+            // }
             if ($user) {
                 $this->response($user, 200); // 200 being the HTTP response code
             } else {
                 // Todo show error !
                 $this->response('Invalid Credentials!', 401); // Not authorized
-            }
-        // }        
+            } 
     }
 
 }
