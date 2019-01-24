@@ -57,4 +57,13 @@ class User_Model extends CI_Model {
         return NULL;
     }
 
+    function get_details($id){
+        $this->db->select('username, listcreated, listtitle, listdescription');
+        $query = $this->db->get_where($this->user, array("id" => $id));
+        if ($query) {
+            return $query->row();
+        }
+        return NULL;
+    }
+
 }

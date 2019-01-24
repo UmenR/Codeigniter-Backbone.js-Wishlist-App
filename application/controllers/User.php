@@ -5,7 +5,7 @@ use Restserver\Libraries\REST_Controller;
 require(APPPATH . '/libraries/REST_Controller.php');
 
 
-class Userapi extends REST_Controller {
+class User extends REST_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('User_Model', 'um');
