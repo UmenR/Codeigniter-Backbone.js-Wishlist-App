@@ -99,7 +99,15 @@ document.getElementById("descriptionlist").innerHTML = app.globlistdescription;
   location.href="http://localhost:8081/CWK2/index.php/userapi/login";
 }
 
-
+app.User = Backbone.Model.extend({
+    defaults:{
+        username:"",
+        password:"",
+        listcreated:0,
+        listtitle:"",
+        listdescription:""
+    }
+});
 
 app.Item = Backbone.Model.extend({
     save: function (attributes,options){
@@ -226,11 +234,15 @@ app.itemList = new app.ItemListCollection();
               $inputs.each(function() {
               values[this.name] = $(this).val();
               });
-              $.ajax({
-                url:'http://localhost:8081/CWK2/index.php/userapi/user/id/'+ app.globuserid,
-                type:'PUT',
-                dataType: 'json',
-                data: values,
+              var loginUser = new app.User();
+              loginUser.set({
+                id:app.globuserid,
+                listtitle:values.listtitle,
+                listdescription:values.listdescription
+              });
+
+              loginUser.save({},{
+                url:'http://localhost:8081/CWK2/users/user/id/'+ app.globuserid,
                 success:function(userid){
                   document.getElementById("nolist").hidden = true;
                   document.getElementById("AppView").hidden = false;
@@ -240,11 +252,8 @@ app.itemList = new app.ItemListCollection();
                   sessionStorage.todoappUserlistcreated = 1;
                   sessionStorage.todoappUsertitle = values.listtitle;
                   sessionStorage.todoappUserdesc = values.listdescription;
-                },
-                error: function (errorResponse) {
-                        console.log(errorResponse)
-                    }
-            });
+                }
+              });
             });
           }
         },

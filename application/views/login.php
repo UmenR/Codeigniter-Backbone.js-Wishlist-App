@@ -30,29 +30,29 @@
   
   <script type="text/javascript">
     var User = Backbone.Model.extend({
-    save: function (attributes,options){
-    var model = this;
-        $.ajax({
-            url:'http://localhost:8081/CWK2/index.php/userapi/login',
-            type:'POST',
-            dataType: 'json',
-            data: model.toJSON(),
-            success:function(userdata){
-                // create user model
-                //Save to local storage and retrieve from next page ?
-                // for now we shall create a global variable
-                sessionStorage.todoappUserid = userdata.id;
-                sessionStorage.todoappUsername = userdata.username;
-                sessionStorage.todoappUserlistcreated = userdata.listcreated;
-                sessionStorage.todoappUsertitle = userdata.listtitle;
-                sessionStorage.todoappUserdesc = userdata.listdescription;
-                location.href="http://localhost:8081/CWK2/index.php/itemapi/index";
-            },
-            error: function (errorResponse) {
-                  document.getElementById("validationErrors").hidden=false;
-                }
-        });
-    },
+    // save: function (attributes,options){
+    // var model = this;
+    //     $.ajax({
+    //         url:'http://localhost:8081/CWK2/index.php/userapi/login',
+    //         type:'POST',
+    //         dataType: 'json',
+    //         data: model.toJSON(),
+    //         success:function(userdata){
+    //             // create user model
+    //             //Save to local storage and retrieve from next page ?
+    //             // for now we shall create a global variable
+    //             sessionStorage.todoappUserid = userdata.id;
+    //             sessionStorage.todoappUsername = userdata.username;
+    //             sessionStorage.todoappUserlistcreated = userdata.listcreated;
+    //             sessionStorage.todoappUsertitle = userdata.listtitle;
+    //             sessionStorage.todoappUserdesc = userdata.listdescription;
+    //             location.href="http://localhost:8081/CWK2/index.php/itemapi/index";
+    //         },
+    //         error: function (errorResponse) {
+    //               document.getElementById("validationErrors").hidden=false;
+    //             }
+    //     });
+    // },
     defaults:{
         username:"",
         password:"",
@@ -75,7 +75,23 @@
 
         var newmodel = new User({username:values.username,password:values.password});
             $('#loginForm').trigger('reset');    
-            newmodel.save();
+            newmodel.save({},{
+                url:'http://localhost:8081/CWK2/users/user/actiontype/login',
+                success:function(userdata){
+                // create user model
+                //Save to local storage and retrieve from next page ?
+                // for now we shall create a global variable
+                sessionStorage.todoappUserid = userdata.attributes.id;
+                sessionStorage.todoappUsername = userdata.attributes.username;
+                sessionStorage.todoappUserlistcreated = userdata.attributes.listcreated;
+                sessionStorage.todoappUsertitle = userdata.attributes.listtitle;
+                sessionStorage.todoappUserdesc = userdata.attributes.listdescription;
+                location.href="http://localhost:8081/CWK2/items/index";
+            },
+            error: function (errorResponse) {
+                  document.getElementById("validationErrors").hidden=false;
+                }
+            });
     });
   </script>
   

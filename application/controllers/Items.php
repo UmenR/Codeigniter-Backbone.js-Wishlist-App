@@ -5,7 +5,7 @@ use Restserver\Libraries\REST_Controller;
 require(APPPATH . '/libraries/REST_Controller.php');
 
 
-class Item extends REST_Controller {
+class Items extends REST_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('Item_Model', 'im');
