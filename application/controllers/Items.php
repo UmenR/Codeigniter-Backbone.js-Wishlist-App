@@ -60,7 +60,7 @@ class Items extends REST_Controller {
       }
     }
 
-    function items_get() {
+    function allitems_get() {
         if($this->session->userdata('is_logged_in')) {
         if($this->get('userid')){
             $userid = $this->get('userid');

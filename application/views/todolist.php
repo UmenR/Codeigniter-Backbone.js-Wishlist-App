@@ -20,21 +20,14 @@
   </style> 
 </head>
 <body>
-  <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script> -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
-  
-  <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script> -->
   <script src="https://underscorejs.org/underscore-min.js" type="text/javascript"></script>
-  
-  <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script> -->
   <script src="http://backbonejs.org/backbone-min.js" type="text/javascript"></script>
-  <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>  -->
-
-  <!-- <div id="container"></div> -->
   
   <h3 id="loggedinuser"></h3>
   <h4 id="titlelist"></h4>
   <h4 id="descriptionlist"></h4>
+  <button onclick="app.logout()" id="logout" hidden>Logout</button>
 
   <div id="nolist" hidden>
   <h3>Create a List to add items!</h3>
@@ -95,9 +88,22 @@ document.getElementById("mainuserid").value = app.globuserid;
 document.getElementById("loggedinuser").innerHTML = "Welcome! "+app.globusername;
 document.getElementById("titlelist").innerHTML = app.globlisttitle;
 document.getElementById("descriptionlist").innerHTML = app.globlistdescription;
+document.getElementById("logout").hidden = false;
 } else {
-  location.href="http://localhost:8081/CWK2/index.php/userapi/login";
+  location.href="http://localhost:8081/CWK2/users/login";
 }
+
+app.logout = function(){
+  sessionStorage.clear();
+  $.ajax({
+            url:'http://localhost:8081/CWK2/users/logout',
+            type:'GET',
+            success:function(){
+              location.href="http://localhost:8081/CWK2/users/login";
+            }
+  });
+}
+
 
 app.User = Backbone.Model.extend({
     defaults:{
@@ -110,48 +116,6 @@ app.User = Backbone.Model.extend({
 });
 
 app.Item = Backbone.Model.extend({
-    save: function (attributes,options){
-    var model = this;
-    if (model.isNew()){
-        $.ajax({
-            url:'http://localhost:8081/CWK2/index.php/itemapi/item',
-            type:'POST',
-            dataType: 'json',
-            data: model.toJSON(),
-            success: function (inserid, status){
-            model.set({id:inserid});
-            model.fetch({
-                    url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
-                    success:function(){
-                      app.itemList.add(model);
-                      app.itemView.addAll();
-                    }
-                });
-            },
-            error: function (errorResponse) {
-                    console.log(errorResponse)
-                }
-        });
-    } else {
-      $.ajax({
-            url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
-            type:'PUT',
-            dataType: 'json',
-            data: attributes,
-            success: function (inserid, status){
-            model.fetch({
-                    url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+model.get('id'),
-                    success:function(){
-                      app.itemView.addAll();
-                    }
-                });
-            },
-            error: function (errorResponse) {
-                    console.log(errorResponse)
-                }
-        });
-    }
-    },
     defaults:{
         title:"",
         priority:1,
@@ -191,26 +155,30 @@ app.ItemView = Backbone.View.extend({
             
             this.model.save({price:values.price,title:values.title,
             url:values.url,priority:values.priority},
-            {url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id')});
+            {
+              url:'http://localhost:8081/CWK2/items/item/id/'+this.model.get('id'),
+            });
             this.$el.removeClass('editing');
        },
        remove: function(){
             var modelToremove = this.model;
-            this.model.destroy({url:'http://localhost:8081/CWK2/index.php/itemapi/item/id/'+this.model.get('id'),
+            this.model.destroy(
+              {url:'http://localhost:8081/CWK2/items/item/id/'+this.model.get('id'),
                 success: function (object, status){
                 app.itemList.remove(modelToremove);
                 app.itemView.addAll();
             },
             error: function (errorResponse) {
                     console.log(errorResponse)
-            }});
+            }
+          });
        }       
     });
 
 
 app.ItemListCollection = Backbone.Collection.extend({
         mdoel:app.Item,
-        url: 'http://localhost:8081/CWK2/index.php/itemapi/items/userid/'+ app.globuserid,
+        url: 'http://localhost:8081/CWK2/items/allitems/userid/'+ app.globuserid,
       });
 app.itemList = new app.ItemListCollection();
             
@@ -268,12 +236,16 @@ app.itemList = new app.ItemListCollection();
             $inputs.each(function() {
             values[this.name] = $(this).val();
             });
-            // TODO validations
-
-            var newmodel = new app.Item({price:values.price,title:values.title,userid:values.userid,
-            url:values.url,priority:values.priority});
+            var newmodel = new app.Item();
             $('#form').find("input[type=text]").val("");    
-            newmodel.save();
+            newmodel.save({price:values.price,title:values.title,userid:values.userid,
+            url:values.url,priority:values.priority},{
+              url:'http://localhost:8081/CWK2/items/item',
+              success: function (updatedmodel){
+                app.itemList.add(updatedmodel);
+                app.itemView.addAll();
+            }
+            });
         },
         addOne: function(todo) {
             var view = new app.ItemView({model: todo});
@@ -290,5 +262,3 @@ app.itemList = new app.ItemListCollection();
   
 </body>
 </html>
-
- 

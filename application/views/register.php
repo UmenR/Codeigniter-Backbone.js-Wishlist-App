@@ -31,21 +31,6 @@
   
   <script type="text/javascript">
     var User = Backbone.Model.extend({
-    // save: function (attributes,options){
-    // var model = this;
-    //     $.ajax({
-    //         url:'http://localhost:8081/CWK2/index.php/userapi/register',
-    //         type:'POST',
-    //         dataType: 'json',
-    //         data: model.toJSON(),
-    //         success:function(userid){
-    //             location.href="http://localhost:8081/CWK2/index.php/userapi/login";
-    //         },
-    //         error: function (errorResponse) {
-    //                 console.log(errorResponse)
-    //             }
-    //     });
-    // },
     defaults:{
         username:"",
         password:"",

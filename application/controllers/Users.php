@@ -48,6 +48,11 @@ class Users extends REST_Controller {
         $this->load->view('register');
     }
 
+    function logout_get(){
+        $this->session->sess_destroy();
+        $this->load->view('login');
+    }
+
     function user_post() {
         if($this->get('actiontype') == 'login') {
             if (!$this->post('username') || !$this->post('password')) {
