@@ -1,12 +1,10 @@
+  
+</head>
+<body>
   <h3 id="loggedinuser"></h3>
   <h4 id="titlelist"></h4>
   <h4 id="descriptionlist"></h4>
   <button onclick="app.logout()" id="logout" hidden>Logout</button>
-
-  <div id="sharelist" hidden>
-  <input type="text" id="sharelink" readonly="readonly">
-  <button onclick="app.copylink()">Get Shareable Link</button>
-  </div>
 
   <div id="nolist" hidden>
   <h3>Create a List to add items!</h3>
@@ -33,9 +31,7 @@
     <input type="hidden" name="userid" id="mainuserid" value="" required></br>
     <input type="submit" value="submit">
     </form>
-    <ol id="todo-list">
-    
-    </ol>
+    <ol id="wish-list"></ol>
   </section>
 
   <script type="text/template" id="item-template">
@@ -55,17 +51,21 @@
         <input type="hidden"  name="userid" id="edituserid" value="" required></br>
         <input type="submit" value="save">
     </form>
-    
   </script>
+
+  <div id="sharelist" hidden>
+  <input type="text" id="sharelink" readonly="readonly">
+  <button onclick="app.copylink()">Get Shareable Link</button>
+  </div>
 
 
 <script type="text/javascript">
 var app = app || {};
-app.globuserid = sessionStorage.todoappUserid;
-app.globusername = sessionStorage.todoappUsername;
-app.globlistcreated = sessionStorage.todoappUserlistcreated;
-app.globlisttitle = sessionStorage.todoappUsertitle;
-app.globlistdescription = sessionStorage.todoappUserdesc;
+app.globuserid = sessionStorage.wishlistappUserid;
+app.globusername = sessionStorage.wishlistappUsername;
+app.globlistcreated = sessionStorage.wishlistappUserlistcreated;
+app.globlisttitle = sessionStorage.wishlistappUsertitle;
+app.globlistdescription = sessionStorage.wishlistappUserdesc;
 
 if(app.globuserid){
 document.getElementById("mainuserid").value = app.globuserid;
@@ -74,7 +74,6 @@ document.getElementById("titlelist").innerHTML = app.globlisttitle;
 document.getElementById("descriptionlist").innerHTML = app.globlistdescription;
 document.getElementById("logout").hidden = false;
 document.getElementById("sharelist").hidden = false;
-document.getElementById("sharelink").value = 'http://localhost:8081/CWK2/share/list/id/'+app.globuserid;
 } else {
   location.href="http://localhost:8081/CWK2/users/login";
 }
@@ -91,6 +90,7 @@ app.logout = function(){
 }
 
 app.copylink = function() {
+  document.getElementById("sharelink").value = 'http://localhost:8081/CWK2/share/list/id/'+app.globuserid;
   var copyText = document.getElementById("sharelink");
   copyText.select();
   document.execCommand("copy");

@@ -35,9 +35,9 @@ app.ItemsView = Backbone.View.extend({
             document.getElementById("titlelist").innerHTML = values.listtitle;
             document.getElementById("descriptionlist").innerHTML = values.listdescription;
 
-            sessionStorage.todoappUserlistcreated = 1;
-            sessionStorage.todoappUsertitle = values.listtitle;
-            sessionStorage.todoappUserdesc = values.listdescription;
+            sessionStorage.wishlistappUserlistcreated = 1;
+            sessionStorage.wishlistappUsertitle = values.listtitle;
+            sessionStorage.wishlistappUserdesc = values.listdescription;
           }
         });
       });
@@ -67,10 +67,10 @@ app.ItemsView = Backbone.View.extend({
   },
   addOne: function(todo) {
       var view = new app.ItemView({model: todo});
-      $('#todo-list').append(view.render().el);
+      $('#wish-list').append(view.render().el);
   },
   addAll: function() {
-      this.$('#todo-list').html(''); // clean the todo list
+      this.$('#wish-list').html(''); // clean the todo list
       app.itemList.each(this.addOne, this);
   },
 });

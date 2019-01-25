@@ -1,9 +1,20 @@
+<link rel="stylesheet" type="text/css" href="<?php echo(base_url());?>css/login.css">
+</head>
+<body>
   <div id="form-container">
-  <form id="loginForm">
-        Username:<input type="text"  name="username" id="username" required> </br>
-        Password:<input type="password"  name="password"  id="password" required> </br>
-        <label id="validationErrors" hidden>Invalid credentials please Re-enter</label> </br>
-        <input type="submit" value="register">
+  <h1 style="text-align: center">Please Sign in</h1>
+  <form class="form-signin" id="loginForm">
+        <input type="text"  name="username" id="username" class="form-control" 
+        placeholder="User Name" autofocus required> </br>
+        <input type="password"  name="password"  id="password" class="form-control" 
+        placeholder="Password" required> </br>
+        <small id="validationErrors" class="text-danger form-text" 
+        hidden>Invalid credentials please Re-enter</small> </br>
+        <input class="btn btn-primary"  style="margin:0 auto; display:block;" type="submit" value="Login"></br>
+        <small class="form-text">
+          <a href="http://localhost:8081/CWK2/users/register"> 
+          Dont have an account?
+        </a></small> </br>
   </form>
   </div>
   
@@ -25,11 +36,11 @@
             newmodel.save({},{
                 url:'http://localhost:8081/CWK2/users/user/actiontype/login',
                 success:function(userdata){
-                sessionStorage.todoappUserid = userdata.attributes.id;
-                sessionStorage.todoappUsername = userdata.attributes.username;
-                sessionStorage.todoappUserlistcreated = userdata.attributes.listcreated;
-                sessionStorage.todoappUsertitle = userdata.attributes.listtitle;
-                sessionStorage.todoappUserdesc = userdata.attributes.listdescription;
+                sessionStorage.wishlistappUserid = userdata.attributes.id;
+                sessionStorage.wishlistappUsername = userdata.attributes.username;
+                sessionStorage.wishlistappUserlistcreated = userdata.attributes.listcreated;
+                sessionStorage.wishlistappUsertitle = userdata.attributes.listtitle;
+                sessionStorage.wishlistappUserdesc = userdata.attributes.listdescription;
                 location.href="http://localhost:8081/CWK2/items/index";
             },
             error: function (errorResponse) {
