@@ -24,32 +24,39 @@ class Users extends REST_Controller {
     }
 
     function user_put(){
-        if (!$this->put('listtitle') || !$this->put('listdescription') || !$this->get('id')) {
-            $this->response(NULL, 400);
-        } else {
-            $id = $this->get('id');
-            $title = $this->put('listtitle');
-            $description = $this->put('listdescription');
-            $user = $this->um->update_user($id,$title,$description);
-
-            if ($user) {
-                $this->response($user, 200); // 200 being the HTTP response code
+        if($this->session->userdata('is_logged_in') == true) {
+            if (!$this->put('listtitle') || !$this->put('listdescription') || !$this->get('id')) {
+                $this->response(NULL, 400);
             } else {
-                $this->response('Invalid Credentials!', 401); // Not authorized
+                $id = $this->get('id');
+                $title = $this->put('listtitle');
+                $description = $this->put('listdescription');
+                $user = $this->um->update_user($id,$title,$description);
+    
+                if ($user) {
+                    $this->response($user, 200); // 200 being the HTTP response code
+                } else {
+                    $this->response('Invalid Credentials!', 401); // Not authorized
+                }
             }
+        } else {
+            $this->response('Please Login', 401);
         }
     }
 
     function login_get(){
+        $this->load->view('Templates/header');
         $this->load->view('login');
     }
 
     function register_get(){
+        $this->load->view('Templates/header');
         $this->load->view('register');
     }
 
     function logout_get(){
         $this->session->sess_destroy();
+        $this->load->view('Templates/header');
         $this->load->view('login');
     }
 

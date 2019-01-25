@@ -25,6 +25,7 @@ class Share extends REST_Controller {
                         $result = NULL;
                     }
                     $result['userdata'] = $user;
+                    $this->load->view('Templates/header');
                     $this->load->view('share', $result); 
                 } else {
                     // Todo show error !

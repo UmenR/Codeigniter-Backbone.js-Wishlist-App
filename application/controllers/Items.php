@@ -12,8 +12,8 @@ class Items extends REST_Controller {
     }
 
     function index_get(){
-        // Remember to only send if logged in!
-        $this->load->view('todolist');
+        $this->load->view('Templates/header');
+        $this->load->view('wishlist');
     }
 
     function item_post() {
