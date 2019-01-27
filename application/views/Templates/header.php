@@ -10,13 +10,13 @@
   <script src="http://backbonejs.org/backbone-min.js" type="text/javascript"></script>
   <link rel="stylesheet" href="https://bootswatch.com/4/litera/bootstrap.min.css">
   <style type="text/css">
-    #wish-list form.edit {
-      display: none; /* Hides input box*/
+    /* #wish-list form.edit {
+      display: none; 
     }
     #wish-list .editing label {
-      display: none; /* Hides label text when .editing*/
+      display: none; 
     }    
     #wish-list .editing form.edit {
-      display: inline; /* Shows input text box when .editing*/
-    }    
+      display: inline; 
+    }     */
   </style> 

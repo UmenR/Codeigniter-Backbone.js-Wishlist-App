@@ -1,0 +1,62 @@
+body {
+    height: 100%;
+    width:100%;
+  }
+  
+  body {
+    display: -ms-flexbox;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    
+  }
+  
+  #nolistForm  {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    /* margin: auto; */
+  }
+  /* .nolistForm .checkbox {
+    font-weight: 400;
+  } */
+  #nolistForm .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 8px;
+    font-size: 16px;
+    margin:3px;
+  }
+  /* .nolistForm .form-control:focus {
+    z-index: 2;
+  } */
+  #nolistForm input[type="text"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+ 
+  .shareSection {
+    width: 100%;
+    /* max-width: 200px; */
+    padding: 15px;
+    display: flex;
+  }
+
+  #form {
+    /* width: 100%; */
+    max-width: 500px;
+    padding: 15px;
+    margin: auto;
+  }
+
+  #form .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 8px;
+    font-size: 16px;
+    margin:3px;
+  }

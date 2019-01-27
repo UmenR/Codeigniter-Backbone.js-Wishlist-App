@@ -28,14 +28,11 @@ app.ItemView = Backbone.View.extend({
         $inputs.each(function() {
         values[this.name] = $(this).val();
         });
-        // TODO validations
-        
         this.model.save({price:values.price,title:values.title,
         url:values.url,priority:values.priority},
         {
           url:'http://localhost:8081/CWK2/items/item/id/'+this.model.get('id'),
         });
-        this.$el.removeClass('editing');
    },
    remove: function(){
         var modelToremove = this.model;
