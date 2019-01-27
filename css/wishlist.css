@@ -16,11 +16,7 @@ body {
     width: 100%;
     max-width: 330px;
     padding: 15px;
-    /* margin: auto; */
   }
-  /* .nolistForm .checkbox {
-    font-weight: 400;
-  } */
   #nolistForm .form-control {
     position: relative;
     box-sizing: border-box;
@@ -29,9 +25,7 @@ body {
     font-size: 16px;
     margin:3px;
   }
-  /* .nolistForm .form-control:focus {
-    z-index: 2;
-  } */
+
   #nolistForm input[type="text"] {
     margin-bottom: -1px;
     border-bottom-right-radius: 0;
@@ -40,13 +34,11 @@ body {
  
   .shareSection {
     width: 100%;
-    /* max-width: 200px; */
     padding: 15px;
     display: flex;
   }
 
   #form {
-    /* width: 100%; */
     max-width: 500px;
     padding: 15px;
     margin: auto;
@@ -59,4 +51,27 @@ body {
     padding: 8px;
     font-size: 16px;
     margin:3px;
+  }
+
+  #editForm {
+    max-width: 500px;
+  }
+
+  #editForm .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    margin-top:-10px;
+    margin-bottom:-10px;
+  }
+
+  .editFormButtons {
+    display: flex;
+    margin-top: -20px;
+    margin-bottom: 50px;
+  }
+
+  .editFormButtons .btn{
+    margin-left: 10px;
+    margin-right: 10px;
   }

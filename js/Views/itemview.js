@@ -13,13 +13,18 @@ app.ItemView = Backbone.View.extend({
     return this; // enable chained calls
   },
   events : {
-    'dblclick label' : 'edit',
+    'click #editbtn' : 'edit',
     'submit #editForm' : 'updateOnEnter',
-    'click .remove': 'remove'
+    'click #removebtn': 'remove'
   },
   edit: function(){
-    this.$el.addClass('editing');
-    this.editForm.focus();
+    this.$('#removebtn').hide();
+    this.$('#editbtn').hide();
+    this.$('#idsptitle').prop( "disabled", false );;
+    this.$('#dispopt').prop( "disabled", false );;
+    this.$('#dispprice').prop( "disabled", false );;
+    this.$('#dispurl').prop( "disabled", false );;
+    this.$('#savebtn').show();
   },
   updateOnEnter: function(e){
         e.preventDefault();

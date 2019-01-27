@@ -44,7 +44,23 @@ app.ItemsView = Backbone.View.extend({
     }
   },
   events: {
-      'submit #form': 'createNewItem'
+      'submit #form': 'createNewItem',
+      'click #sortbypri' : 'sortbyPriority',
+      'click #sortbyid' : 'sortbyId'
+  },
+  sortbyId: function(){
+    this.$('#sortbypri').show();
+    this.$('#sortbyid').hide();
+    app.itemList.comparator = 'id';
+    app.itemList.sort();
+    app.itemView.addAll();
+  },
+  sortbyPriority: function(){
+    this.$('#sortbyid').show();
+    this.$('#sortbypri').hide();
+    app.itemList.comparator = 'priority';
+    app.itemList.sort();
+    app.itemView.addAll();
   },
   createNewItem: function(e){
       
@@ -70,7 +86,12 @@ app.ItemsView = Backbone.View.extend({
       $('#wish-list').append(view.render().el);
   },
   addAll: function() {
-      this.$('#wish-list').html(''); // clean the todo list
+    if(app.itemList.length > 1){
+      this.$('#srtbtns').show();
+    } else {
+      this.$('#srtbtns').hide();
+    }
+    this.$('#wish-list').html(''); // clean the todo list
       app.itemList.each(this.addOne, this);
   },
 });

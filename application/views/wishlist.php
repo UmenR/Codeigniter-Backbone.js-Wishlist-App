@@ -2,9 +2,11 @@
 </head>
 <body>
   <h1 class="text-primary" style="text-align: center" id="loggedinuser"></h1>
-  <h4 class="text-primary" id="titlelist"></h4>
-  <h4 class="text-primary" id="descriptionlist"></h4>
-  
+  <div style="display:flex; margin:35px; margin-left:15px;">
+  <h5 class="text-warning" id="titlelist"></h5><h5 class="text-warning"> :- </h5>
+  <h5 class="text-warning" id="descriptionlist"></h5>
+  </div>
+
 
   <div id="nolist" hidden>
   <h3 class="text-primary">Create a List to add items!</h3>
@@ -17,8 +19,11 @@
   </div>
 
 
-
   <section id="AppView" hidden>
+  <div style=" margin:15px;" hidden>
+  <h5 class="text-warning" id="totitems"></h5>
+  <h5 class="text-warning" id="totprice"></h5>
+  </div>
     <form id="form">
     <input type="text" name="title" id="title" placeholder="Item title" class="form-control" required> </br>
     <select name="priority" class="form-control" id="priority" required>
@@ -27,29 +32,33 @@
         <option value="2">Nice to Have</option>
         <option value="3">If possible</option>
     </select> </br>
-    <input type="text" name="url" id="url" placeholder="Item url" class="form-control" required></br>
-    <input type="text" name="price" id="price" placeholder="Item price" class="form-control" required></br>
+    <input type="url" name="url" id="url" placeholder="Item url" class="form-control" required></br>
+    <input type="number" step="0.01" name="price" id="price" pattern="^[0-9]*$" placeholder="Item price" class="form-control" required></br>
     <input type="hidden" name="userid" id="mainuserid" value="" class="form-control" required></br>
-    <input type="submit" value="submit">
+    <input type="submit" class="btn btn-success" style="margin:0 auto; margin-top: -40px; margin-bottom: 60px; display:block;" value="Add">
     </form>
+    <div id="srtbtns" style="display:none;"> 
+      <button type="button" id="sortbypri" class="btn btn-info" style="margin:15px">Sort by priority</button>
+      <button type="button" id="sortbyid" class="btn btn-info" style="display:none; margin:15px">Sort by item order</button>
+    </div>
     <ol id="wish-list"></ol>
   </section>
 
   <script type="text/template" id="item-template">
-    
-    
     <form class="edit" id="editForm">
-        <input type="text"  name="title" value="<%= title%>" id="title" required> </br>
-        <select name="priority" id="dispopt" >
+        <input type="text"  name="title" value="<%= title%>" id="idsptitle" class="form-control form-control-sm" disabled required> </br>
+        <select name="priority" id="dispopt" disabled class="form-control form-control-sm" >
         <%= app.setPriority(priority)%>
         </select> </br>
-        <input type="text"  name="price" value="<%= price%>" id="price" required></br>
-        <input type="hidden"  name="url" id="url" value="changedurl" required></br>
-        <input type="hidden"  name="userid" id="edituserid" value="" required></br>
-        <input type="submit" value="save">
+        <input type="url"  name="url" id="dispurl" value="<%= url%>" class="form-control form-control-sm" disabled required></br>
+        <input type="number" step="0.01"  name="price" value="<%= price%>" id="dispprice" class="form-control form-control-sm" disabled required></br>
+        <input type="hidden"  name="userid" id="edituserid" value="" class="form-control form-control-sm" disabled required></br>
+        <div class="editFormButtons" >
+          <button type="button" class="btn btn-secondary" id="editbtn" class="enable">Edit</button>
+          <button type="submit" class="btn btn-success" id="savebtn" style="display:none"> Save</button>
+        <button type="button"  class="btn btn-danger" id="removebtn">Remove</button>
+        </div>
     </form>
-    <button class="remove" id="removebtn">remove</button>
-    <button class="enable">Edit</button>
   </script>
 
   <div class="sharesection" id="sharelist" hidden>
@@ -57,7 +66,7 @@
     <input style="width:500px" type="text" id="sharelink" class="form-control" readonly="readonly" hidden>
   </div>
 
-<button onclick="app.logout()" id="logout" hidden>Logout</button>
+<button onclick="app.logout()" class="btn btn-danger" style="margin:15px" id="logout" hidden>Logout</button>
 <script type="text/javascript">
 var app = app || {};
 app.globuserid = sessionStorage.wishlistappUserid;

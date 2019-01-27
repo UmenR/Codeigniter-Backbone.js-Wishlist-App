@@ -42,7 +42,7 @@
     break;
     case 2: return 'Nice to Have';
     break;
-    case 1: return 'If possible';
+    case 3: return 'If possible';
     break;
     }
   }
