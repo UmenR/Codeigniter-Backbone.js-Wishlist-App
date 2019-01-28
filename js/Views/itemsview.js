@@ -46,7 +46,8 @@ app.ItemsView = Backbone.View.extend({
   events: {
       'submit #form': 'createNewItem',
       'click #sortbypri' : 'sortbyPriority',
-      'click #sortbyid' : 'sortbyId'
+      'click #sortbyid' : 'sortbyId',
+      'click #sharelinkbtn' : 'shareLink'
   },
   sortbyId: function(){
     this.$('#sortbypri').show();
@@ -81,6 +82,13 @@ app.ItemsView = Backbone.View.extend({
       }
       });
   },
+  shareLink: function(){
+    this.$('#sharelink').show();
+    document.getElementById("sharelink").value = 'http://localhost:8081/CWK2/share/list/id/'+app.globuserid;
+    var copyText = document.getElementById("sharelink");
+    copyText.select();
+    document.execCommand("copy");
+  },
   addOne: function(todo) {
       var view = new app.ItemView({model: todo});
       $('#wish-list').append(view.render().el);
@@ -88,11 +96,36 @@ app.ItemsView = Backbone.View.extend({
   addAll: function() {
     if(app.itemList.length > 1){
       this.$('#srtbtns').show();
+      this.$('#stats').show();
+      this.$('#sharelist').show();
+      this.$('#noitms').hide();
+      this.calculateStats();
+    } else if (app.itemList.length > 0) {
+      this.$('#srtbtns').hide();
+      this.$('#stats').show();
+      this.$('#sharelist').show();
+      this.$('#noitms').hide();
+      this.calculateStats();
     } else {
       this.$('#srtbtns').hide();
+      this.$('#stats').hide();
+      this.$('#sharelist').hide();
+      this.$('#noitms').show();
     }
+
+
     this.$('#wish-list').html(''); // clean the todo list
       app.itemList.each(this.addOne, this);
   },
+  calculateStats: function(){
+    var priceArr = app.itemList.pluck("price");
+    var total = 0;
+    priceArr.map(function(price){
+      var priceFloat = parseFloat(price);
+      total += priceFloat;
+    });
+    this.$('#totprice').text("Total price : $"+total);
+    this.$('#totitems').text("Total Items : "+app.itemList.length);
+  }
 });
 app.itemView = new app.ItemsView();

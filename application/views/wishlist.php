@@ -20,10 +20,11 @@
 
 
   <section id="AppView" hidden>
-  <div style=" margin:15px;" hidden>
+  <div id="stats" style="display:none; margin:15px;">
   <h5 class="text-warning" id="totitems"></h5>
   <h5 class="text-warning" id="totprice"></h5>
   </div>
+  <h5 class="text-warning" style="margin:15px;" id="noitms">No items in wishlist!</h5>
     <form id="form">
     <input type="text" name="title" id="title" placeholder="Item title" class="form-control" required> </br>
     <select name="priority" class="form-control" id="priority" required>
@@ -42,6 +43,11 @@
       <button type="button" id="sortbyid" class="btn btn-info" style="display:none; margin:15px">Sort by item order</button>
     </div>
     <ol id="wish-list"></ol>
+
+    <div class="sharesection" id="sharelist" style="display:none; margin:35px">
+    <button type="button" id="sharelinkbtn" class="btn btn-secondary" >Get Shareable Link</button>
+    <input style="display:none; width:500px" type="text" id="sharelink" class="form-control" readonly="readonly">
+  </div>
   </section>
 
   <script type="text/template" id="item-template">
@@ -61,10 +67,7 @@
     </form>
   </script>
 
-  <div class="sharesection" id="sharelist" hidden>
-    <button id="sharelinkbtn" class="btn btn-secondary" onclick="app.copylink()">Get Shareable Link</button>
-    <input style="width:500px" type="text" id="sharelink" class="form-control" readonly="readonly" hidden>
-  </div>
+  
 
 <button onclick="app.logout()" class="btn btn-danger" style="margin:15px" id="logout" hidden>Logout</button>
 <script type="text/javascript">
@@ -81,7 +84,6 @@ document.getElementById("loggedinuser").innerHTML = app.globusername + " 's Wish
 document.getElementById("titlelist").innerHTML = app.globlisttitle;
 document.getElementById("descriptionlist").innerHTML = app.globlistdescription;
 document.getElementById("logout").hidden = false;
-document.getElementById("sharelist").hidden = false;
 } else {
   location.href="http://localhost:8081/CWK2/users/login";
 }
@@ -97,13 +99,6 @@ app.logout = function(){
   });
 }
 
-app.copylink = function() {
-  document.getElementById("sharelink").hidden = false;
-  document.getElementById("sharelink").value = 'http://localhost:8081/CWK2/share/list/id/'+app.globuserid;
-  var copyText = document.getElementById("sharelink");
-  copyText.select();
-  document.execCommand("copy");
-}
 app.setPriority = function(priority){
   switch(priority){
     case "1":
