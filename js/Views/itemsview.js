@@ -32,7 +32,7 @@ app.ItemsView = Backbone.View.extend({
           success:function(userid){
             document.getElementById("nolist").hidden = true;
             document.getElementById("AppView").hidden = false;
-            document.getElementById("titlelist").innerHTML = values.listtitle;
+            document.getElementById("titlelist").innerHTML = values.listtitle + " :- " ;
             document.getElementById("descriptionlist").innerHTML = values.listdescription;
 
             sessionStorage.wishlistappUserlistcreated = 1;
@@ -66,6 +66,7 @@ app.ItemsView = Backbone.View.extend({
   createNewItem: function(e){
       
       e.preventDefault();
+      // console.log(app.globtoken);
       var $inputs = $('#form :input');
       var values = {};
       $inputs.each(function() {
@@ -74,9 +75,10 @@ app.ItemsView = Backbone.View.extend({
       var newmodel = new app.Item();
       $('#form').trigger('reset');    
       newmodel.save({price:values.price,title:values.title,userid:values.userid,
-      url:values.url,priority:values.priority},{
+      url:values.url,priority:values.priority,token:app.globtoken},{
         url:'http://localhost:8081/CWK2/items/item',
         success: function (updatedmodel){
+          // console.log(updatedmodel);
           app.itemList.add(updatedmodel);
           app.itemView.addAll();
       }

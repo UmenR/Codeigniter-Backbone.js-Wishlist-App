@@ -3,7 +3,7 @@
 <body>
   <h1 class="text-primary" style="text-align: center" id="loggedinuser"></h1>
   <div style="display:flex; margin:35px; margin-left:15px;">
-  <h5 class="text-warning" id="titlelist"></h5><h5 class="text-warning"> :- </h5>
+  <h5 class="text-warning" id="titlelist"></h5>
   <h5 class="text-warning" id="descriptionlist"></h5>
   </div>
 
@@ -77,11 +77,12 @@ app.globusername = sessionStorage.wishlistappUsername;
 app.globlistcreated = sessionStorage.wishlistappUserlistcreated;
 app.globlisttitle = sessionStorage.wishlistappUsertitle;
 app.globlistdescription = sessionStorage.wishlistappUserdesc;
+app.globtoken = sessionStorage.usertoken;
 
 if(app.globuserid){
 document.getElementById("mainuserid").value = app.globuserid;
 document.getElementById("loggedinuser").innerHTML = app.globusername + " 's Wish List";
-document.getElementById("titlelist").innerHTML = app.globlisttitle;
+document.getElementById("titlelist").innerHTML = app.globlisttitle + " :- ";
 document.getElementById("descriptionlist").innerHTML = app.globlistdescription;
 document.getElementById("logout").hidden = false;
 } else {

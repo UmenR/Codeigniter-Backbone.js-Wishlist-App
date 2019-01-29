@@ -3,12 +3,14 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 use Restserver\Libraries\REST_Controller;
 require(APPPATH . '/libraries/REST_Controller.php');
+require_once(APPPATH . '/libraries/Jwt_Imp.php');
 
 
 class Items extends REST_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('Item_Model', 'im');
+        $this->jwtImp = new Jwt_Imp();
     }
 
     function index_get(){
@@ -17,7 +19,7 @@ class Items extends REST_Controller {
     }
 
     function item_post() {
-        if($this->session->userdata('is_logged_in')) { 
+        if($this->post('token') && $this->validate_token($this->post('token')) && $this->session->userdata('is_logged_in') ) { 
         if (!$this->post('title') || !$this->post('price')||!$this->post('priority')||!$this->post('url')
             ||!$this->post('userid')) {
             $this->response('Bad Request !', 400);
@@ -105,14 +107,16 @@ class Items extends REST_Controller {
     }
 
     function item_delete(){
-        if($this->session->userdata('is_logged_in')){
+        $ci =& get_instance();
+        $token = $ci->input->get_request_header('Authorization', TRUE);
+        if($this->session->userdata('is_logged_in') && $token && $this->validate_token($token)){
         if(!$this->get('id')){
             $this->response('Bad Request!', 400);
         }else{
             $id = $this->get('id');
             $item = $this->im->delete_item($id);
             if ($item) {
-                $this->response($item, 200); // 200 being the HTTP response code
+                $this->response($token, 200); // 200 being the HTTP response code
             } else {
                 $this->response('Ooops! Something went wrong!', 401); // Not authorized
             }
@@ -120,6 +124,15 @@ class Items extends REST_Controller {
       }else{
         $this->response('Access denied please login!', 401);
       }
+    }
+
+    function validate_token($token){
+        try{
+            $jwtData = $this->jwtImp->DecodeToken($token);
+            return true;
+        } catch (Exception $e){
+            return false;
+        }
     }
     }
 

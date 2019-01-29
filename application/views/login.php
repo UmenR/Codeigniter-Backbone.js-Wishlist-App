@@ -36,11 +36,12 @@
             newmodel.save({},{
                 url:'http://localhost:8081/CWK2/users/user/actiontype/login',
                 success:function(userdata){
-                sessionStorage.wishlistappUserid = userdata.attributes.id;
-                sessionStorage.wishlistappUsername = userdata.attributes.username;
-                sessionStorage.wishlistappUserlistcreated = userdata.attributes.listcreated;
-                sessionStorage.wishlistappUsertitle = userdata.attributes.listtitle;
-                sessionStorage.wishlistappUserdesc = userdata.attributes.listdescription;
+                sessionStorage.wishlistappUserid = userdata.attributes.user.id;
+                sessionStorage.wishlistappUsername = userdata.attributes.user.username;
+                sessionStorage.wishlistappUserlistcreated = userdata.attributes.user.listcreated;
+                sessionStorage.wishlistappUsertitle = userdata.attributes.user.listtitle;
+                sessionStorage.wishlistappUserdesc = userdata.attributes.user.listdescription;
+                sessionStorage.usertoken = userdata.attributes.token;
                 location.href="http://localhost:8081/CWK2/items/index";
             },
             error: function (errorResponse) {

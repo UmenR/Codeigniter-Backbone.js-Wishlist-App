@@ -3,12 +3,14 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 use Restserver\Libraries\REST_Controller;
 require(APPPATH . '/libraries/REST_Controller.php');
+require_once(APPPATH . '/libraries/Jwt_Imp.php');
 
 
 class Users extends REST_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('User_Model', 'um');
+        $this->jwtImp = new Jwt_Imp();
     }
 
    
@@ -78,8 +80,15 @@ class Users extends REST_Controller {
                         'id' => $user->id,
                         'is_logged_in' => 'true'
                     );
+                    $tokenData['id'] = $user->id;
+                    $tokenData['username'] = $user->username;
+                    $token = $this->jwtImp->GenerateToken($tokenData);
+
+                    $returnData = array("user"=>$user,"token" =>$token);
+
                     $this->session->set_userdata($sessiondata);
-                    $this->response($user, 200); // 200 being the HTTP response code
+                    $this->response($returnData, 200); // 200 being the HTTP response code
+                    // $this->response($user, 200);
                 } else {
                     $this->response('Invalid Credentials!', 401); // Not authorized
                 }
@@ -105,6 +114,16 @@ class Users extends REST_Controller {
                         // Todo show error !
                     $this->response('Invalid Credentials!', 401); // Not authorized
                 } 
+        }
+    }
+
+    function token_post(){
+        $token = $this->post('token');
+        try{
+            $jwtData = $this->jwtImp->DecodeToken($token);
+            echo json_encode($jwtData);
+        } catch (Exception $e){
+            $this->response('Invalid Credentials!', 401);
         }
     }
 }

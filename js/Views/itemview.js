@@ -43,6 +43,7 @@ app.ItemView = Backbone.View.extend({
         var modelToremove = this.model;
         this.model.destroy(
           {url:'http://localhost:8081/CWK2/items/item/id/'+this.model.get('id'),
+            headers:{'Authorization':app.globtoken},
             success: function (object, status){
             app.itemList.remove(modelToremove);
             app.itemView.addAll();
