@@ -115,10 +115,10 @@ app.setPriority = function(priority){
 }
 
 </script>
-<script src="<?php echo(base_url());?>js/Models/usermodel.js" type="text/javascript"></script>
-<script src="<?php echo(base_url());?>js/Models/itemmodel.js" type="text/javascript"></script>
-<script src="<?php echo(base_url());?>js/Views/itemview.js" type="text/javascript"></script>
-<script src="<?php echo(base_url());?>js/Collections/itemscollection.js" type="text/javascript"></script>
-<script src="<?php echo(base_url());?>js/Views/itemsview.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Models/UserModel.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Models/ItemModel.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Views/ItemView.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Collections/ItemsCollection.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Views/ItemsView.js" type="text/javascript"></script>
 </body>
 </html>

@@ -37,6 +37,10 @@ app.ItemView = Backbone.View.extend({
         url:values.url,priority:values.priority},
         {
           url:'http://localhost:8081/CWK2/items/item/id/'+this.model.get('id'),
+          success:function(){
+            app.itemList.sort();
+            app.itemView.addAll();
+          }
         });
    },
    remove: function(){

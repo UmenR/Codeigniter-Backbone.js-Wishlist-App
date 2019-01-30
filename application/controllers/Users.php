@@ -25,6 +25,9 @@ class Users extends REST_Controller {
         }
     }
 
+    /**
+     * Endpoint used to update user data
+     */
     function user_put(){
         if($this->session->userdata('is_logged_in') == true) {
             if (!$this->put('listtitle') || !$this->put('listdescription') || !$this->get('id')) {
@@ -46,22 +49,36 @@ class Users extends REST_Controller {
         }
     }
 
+    /**
+     * Endpoint used to get the login page
+     */
     function login_get(){
-        $this->load->view('Templates/header');
-        $this->load->view('login');
+        $this->load->view('Templates/Header');
+        $this->load->view('Login');
     }
 
+    /**
+     * Endpoint used to get the register page
+     */
     function register_get(){
-        $this->load->view('Templates/header');
-        $this->load->view('register');
+        $this->load->view('Templates/Header');
+        $this->load->view('Register');
     }
 
+    /**
+     * Endpoint used to logout a user
+     * and re send the Login page
+     */
     function logout_get(){
         $this->session->sess_destroy();
-        $this->load->view('Templates/header');
-        $this->load->view('login');
+        $this->load->view('Templates/Header');
+        $this->load->view('Login');
     }
 
+    /**
+     * Endpoint used to Register user to the system OR
+     * Login a user using credentials.
+     */
     function user_post() {
         if($this->get('actiontype') == 'login') {
             if (!$this->post('username') || !$this->post('password')) {
@@ -97,16 +114,16 @@ class Users extends REST_Controller {
                 $username = $this->post('username');
                 $password = $this->post('password');
                 $listtitle = NULL;
-                $listdescription = NULL;
+                $listDescription = NULL;
 
                 if($this->post('listtitle') && $this->post('listdescription')){
                     $listtitle = $this->post('listtitle');
-                    $listdescription = $this->post('listdescription');
+                    $listDescription = $this->post('listdescription');
                 }
 
                 $salt = ('1ndf341endf13i9f2f3dmvnbc1k4');
                 $hashed = hash('sha512',$password.$salt);
-                $user = $this->um->add_user($username,$hashed,$listtitle,$listdescription);
+                $user = $this->um->add_user($username,$hashed,$listtitle,$listDescription);
                     
                 if ($user) {
                     $this->response($user, 200); // 200 being the HTTP response code
@@ -117,13 +134,4 @@ class Users extends REST_Controller {
         }
     }
 
-    function token_post(){
-        $token = $this->post('token');
-        try{
-            $jwtData = $this->jwtImp->DecodeToken($token);
-            echo json_encode($jwtData);
-        } catch (Exception $e){
-            $this->response('Invalid Credentials!', 401);
-        }
-    }
 }
