@@ -9,7 +9,7 @@ require_once(APPPATH . '/libraries/Jwt_Imp.php');
 class Items extends REST_Controller {
     function __construct() {
         parent::__construct();
-        $this->load->model('Item_Model', 'im');
+        $this->load->model('ItemModel', 'im');
         $this->jwtImp = new Jwt_Imp();
     }
 

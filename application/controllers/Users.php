@@ -9,7 +9,7 @@ require_once(APPPATH . '/libraries/Jwt_Imp.php');
 class Users extends REST_Controller {
     function __construct() {
         parent::__construct();
-        $this->load->model('User_Model', 'um');
+        $this->load->model('UserModel', 'um');
         $this->jwtImp = new Jwt_Imp();
     }
 
@@ -131,6 +131,17 @@ class Users extends REST_Controller {
                         // Todo show error !
                     $this->response('Invalid Credentials!', 401); // Not authorized
                 } 
+        }
+    }
+
+    function isunique_get(){
+        if(!$this->get('username')){
+            $this->response('Bad Request!', 400);
+        } else {
+            $username = $this->get('username');
+            $isUnique = FALSE;
+            $isUnique = $this->um->is_username_unique($username);
+            $this->response($isUnique, 200);
         }
     }
 

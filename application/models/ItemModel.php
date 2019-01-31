@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Item_Model extends CI_Model {
+class ItemModel extends CI_Model {
 
     private $Item = 'Item';
 

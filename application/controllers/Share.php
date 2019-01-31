@@ -7,8 +7,8 @@ require(APPPATH . '/libraries/REST_Controller.php');
 class Share extends REST_Controller {
     function __construct() {
         parent::__construct();
-        $this->load->model('User_Model', 'um');
-        $this->load->model('Item_Model', 'im');
+        $this->load->model('UserModel', 'um');
+        $this->load->model('ItemModel', 'im');
     }
 
     /**

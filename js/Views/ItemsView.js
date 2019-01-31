@@ -30,10 +30,11 @@ app.ItemsView = Backbone.View.extend({
         loginUser.save({},{
           url:'http://localhost:8081/CWK2/users/user/id/'+ app.globuserid,
           success:function(userid){
+            console.log("sdsdsdsd");
             document.getElementById("nolist").hidden = true;
             document.getElementById("AppView").hidden = false;
-            document.getElementById("titlelist").innerHTML = values.listtitle + " :- " ;
-            document.getElementById("descriptionlist").innerHTML = values.listdescription;
+            document.getElementById("titlelist").innerHTML = "Title : " + values.listtitle;
+            document.getElementById("descriptionlist").innerHTML = "Description : " + values.listdescription;
 
             sessionStorage.wishlistappUserlistcreated = 1;
             sessionStorage.wishlistappUsertitle = values.listtitle;
