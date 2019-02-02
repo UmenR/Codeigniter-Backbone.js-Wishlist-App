@@ -18,13 +18,16 @@ app.ItemView = Backbone.View.extend({
     'click #removebtn': 'remove'
   },
   edit: function(){
-    this.$('#removebtn').hide();
-    this.$('#editbtn').hide();
-    this.$('#idsptitle').prop( "disabled", false );;
-    this.$('#dispopt').prop( "disabled", false );;
-    this.$('#dispprice').prop( "disabled", false );;
-    this.$('#dispurl').prop( "disabled", false );;
-    this.$('#savebtn').show();
+    if(app.canEdit){
+      app.canEdit = false;
+      this.$('#removebtn').hide();
+      this.$('#editbtn').hide();
+      this.$('#idsptitle').prop( "disabled", false );;
+      this.$('#dispopt').prop( "disabled", false );;
+      this.$('#dispprice').prop( "disabled", false );;
+      this.$('#dispurl').prop( "disabled", false );;
+      this.$('#savebtn').show();
+    }
   },
   updateOnEnter: function(e){
         e.preventDefault();
@@ -37,6 +40,10 @@ app.ItemView = Backbone.View.extend({
         url:values.url,priority:values.priority},
         {
           url:'http://localhost:8081/CWK2/items/item/id/'+this.model.get('id'),
+          success:function(){
+            app.itemList.sort();
+            app.itemView.addAll();
+          }
         });
    },
    remove: function(){

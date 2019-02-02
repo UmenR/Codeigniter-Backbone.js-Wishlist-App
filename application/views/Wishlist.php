@@ -1,30 +1,34 @@
 <link rel="stylesheet" type="text/css" href="<?php echo(base_url());?>css/wishlist.css">
 </head>
 <body>
-  <h1 class="text-primary" style="text-align: center" id="loggedinuser"></h1>
-  <div style="display:flex; margin:35px; margin-left:15px;">
-  <h5 class="text-warning" id="titlelist"></h5>
-  <h5 class="text-warning" id="descriptionlist"></h5>
+<div class=" text-white bg-primary mb-3" style="margin-top:0px; width: 100%;">
+  <div class="card-header" >
+  <h1 style="text-align: center" id="loggedinuser"></h1>
   </div>
-
+  <div style="display:flex;" class="card-body">
+    <div>
+      <h3  id="titlelist"></h3>
+      <h6  id="descriptionlist"></h6>
+    </div>
+    <div style="margin-left: auto; order: 2; display:flex">
+    <button onclick="app.sharelink()" id="sharelinkbtn" style="height:40px; margin-right:5px;" class="btn btn-secondary" >Get Shareable Link</button>
+    <textarea type="text" name="sharelink" id="sharelink" style="height:0px;width:0px;opacity:0"></textarea>
+    <button onclick="app.logout()"  style="height:40px" class="btn btn-danger" id="logout" hidden>Logout</button>
+    </div>
+  </div>
+</div>
 
   <div id="nolist" hidden>
-  <h3 class="text-primary">Create a List to add items!</h3>
+  <h3 class="text-primary" style="text-align: center">Create a List to add items!</h3>
   <form id="nolistForm">
   <input type="text" name="listtitle" id="listtitle" placeholder="List title" class="form-control" required autofocus> </br>
   <input type="text" name="listdescription" id="listdescription" placeholder="List description" class="form-control" required> </br>
   <input type="hidden" name="listuserid" id="listuserid" value=""></br>
-  <input type="submit" class="btn btn-success" value="Create List">
+  <input type="submit" style="margin:0 auto; display:block;" class="btn btn-success" value="Create List">
+  <small id="validationErrorsNoListForm" class="text-danger form-text" style="text-align:center; margin:30px;display:none">Please enter valid names</small> </br>
   </form>
   </div>
-
-
   <section id="AppView" hidden>
-  <div id="stats" style="display:none; margin:15px;">
-  <h5 class="text-warning" id="totitems"></h5>
-  <h5 class="text-warning" id="totprice"></h5>
-  </div>
-  <h5 class="text-warning" style="margin:15px;" id="noitms">No items in wishlist!</h5>
     <form id="form">
     <input type="text" name="title" id="title" placeholder="Item title" class="form-control" required> </br>
     <select name="priority" class="form-control" id="priority" required>
@@ -33,23 +37,24 @@
         <option value="2">Nice to Have</option>
         <option value="3">If possible</option>
     </select> </br>
+
     <input type="url" name="url" id="url" placeholder="Item url" class="form-control" required></br>
-    <input type="number" step="0.01" name="price" id="price" pattern="^[0-9]*$" placeholder="Item price" class="form-control" required></br>
+    <input type="number" min="1" step="0.01" name="price" id="price" placeholder="Item price" class="form-control" required></br>
     <input type="hidden" name="userid" id="mainuserid" value="" class="form-control" required></br>
     <input type="submit" class="btn btn-success" style="margin:0 auto; margin-top: -40px; margin-bottom: 60px; display:block;" value="Add">
+    <small id="validationErrorsForm" class="text-danger form-text" style="display:none">Please enter a valid name</small> </br>
     </form>
-    <div id="srtbtns" style="display:none;"> 
-      <button type="button" id="sortbypri" class="btn btn-info" style="margin:15px">Sort by priority</button>
-      <button type="button" id="sortbyid" class="btn btn-info" style="display:none; margin:15px">Sort by item order</button>
-    </div>
-    <ol id="wish-list"></ol>
+    <hr>
+    <h5 class="text-info" style="margin:15px; text-align:center" id="noitms">No items in wishlist!</h5>
+      <div id="srtbtns" style="display:none;"> 
+        <button type="button" id="sortbypri" class="btn btn-info" style="margin:45px">Sort by priority</button>
+        <button type="button" id="sortbyid" class="btn btn-info" style="display:none; margin:45px">Sort by item order</button>
+      </div>
+    <ul style="list-style-type: none;" id="wish-list"></ul>
+  
 
-    <div class="sharesection" id="sharelist" style="display:none; margin:35px">
-    <button type="button" id="sharelinkbtn" class="btn btn-secondary" >Get Shareable Link</button>
-    <input style="display:none; width:500px" type="text" id="sharelink" class="form-control" readonly="readonly">
-  </div>
+    
   </section>
-
   <script type="text/template" id="item-template">
     <form class="edit" id="editForm">
         <input type="text"  name="title" value="<%= title%>" id="idsptitle" class="form-control form-control-sm" disabled required> </br>
@@ -60,16 +65,13 @@
         <input type="number" step="0.01"  name="price" value="<%= price%>" id="dispprice" class="form-control form-control-sm" disabled required></br>
         <input type="hidden"  name="userid" id="edituserid" value="" class="form-control form-control-sm" disabled required></br>
         <div class="editFormButtons" >
-          <button type="button" class="btn btn-secondary" id="editbtn" class="enable">Edit</button>
           <button type="submit" class="btn btn-success" id="savebtn" style="display:none"> Save</button>
-        <button type="button"  class="btn btn-danger" id="removebtn">Remove</button>
+          <button type="button" style="float:right" class="btn btn-secondary" id="editbtn" class="enable">Edit</button>
+          <button type="button"  style="float:right" class="btn btn-danger" id="removebtn">Remove</button>
         </div>
     </form>
   </script>
 
-  
-
-<button onclick="app.logout()" class="btn btn-danger" style="margin:15px" id="logout" hidden>Logout</button>
 <script type="text/javascript">
 var app = app || {};
 app.globuserid = sessionStorage.wishlistappUserid;
@@ -82,9 +84,12 @@ app.globtoken = sessionStorage.usertoken;
 if(app.globuserid){
 document.getElementById("mainuserid").value = app.globuserid;
 document.getElementById("loggedinuser").innerHTML = app.globusername + " 's Wish List";
-document.getElementById("titlelist").innerHTML = app.globlisttitle + " :- ";
-document.getElementById("descriptionlist").innerHTML = app.globlistdescription;
+if(app.globlisttitle != "") {
+  document.getElementById("titlelist").innerHTML = app.globlisttitle;
+  document.getElementById("descriptionlist").innerHTML = app.globlistdescription;
+} 
 document.getElementById("logout").hidden = false;
+
 } else {
   location.href="http://localhost:8081/CWK2/users/login";
 }
@@ -98,6 +103,18 @@ app.logout = function(){
               location.href="http://localhost:8081/CWK2/users/login";
             }
   });
+}
+
+app.sharelink = function(){
+  swal({
+      title: "Link Copied To Clipboard!",
+      icon: "success",
+      button: "Ok!",
+    });
+    document.getElementById("sharelink").value = 'http://localhost:8081/CWK2/share/list/id/'+app.globuserid;
+    var copyText = document.getElementById("sharelink");
+    copyText.select();
+    document.execCommand("copy");
 }
 
 app.setPriority = function(priority){
@@ -115,10 +132,10 @@ app.setPriority = function(priority){
 }
 
 </script>
-<script src="<?php echo(base_url());?>js/Models/usermodel.js" type="text/javascript"></script>
-<script src="<?php echo(base_url());?>js/Models/itemmodel.js" type="text/javascript"></script>
-<script src="<?php echo(base_url());?>js/Views/itemview.js" type="text/javascript"></script>
-<script src="<?php echo(base_url());?>js/Collections/itemscollection.js" type="text/javascript"></script>
-<script src="<?php echo(base_url());?>js/Views/itemsview.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Models/UserModel.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Models/ItemModel.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Views/ItemView.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Collections/ItemsCollection.js" type="text/javascript"></script>
+<script src="<?php echo(base_url());?>js/Views/ItemsView.js" type="text/javascript"></script>
 </body>
 </html>
