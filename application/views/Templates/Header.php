@@ -8,6 +8,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
   <script src="https://underscorejs.org/underscore-min.js" type="text/javascript"></script>
   <script src="http://backbonejs.org/backbone-min.js" type="text/javascript"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
   <style type="text/css">
   </style> 

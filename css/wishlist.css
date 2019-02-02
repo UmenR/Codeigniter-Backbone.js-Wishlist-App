@@ -1,13 +1,13 @@
 body {
     height: 100%;
     width:100%;
+    background-color: #ecf0f1;
   }
   
   body {
     display: -ms-flexbox;
     -ms-flex-align: center;
     align-items: center;
-    padding-top: 40px;
     padding-bottom: 40px;
     
   }
@@ -33,11 +33,7 @@ body {
     border-bottom-left-radius: 0;
   }
  
-  .shareSection {
-    width: 100%;
-    padding: 15px;
-    display: flex;
-  }
+
 
   #form {
     max-width: 500px;
@@ -68,11 +64,29 @@ body {
 
   .editFormButtons {
     display: flex;
-    margin-top: -20px;
-    margin-bottom: 50px;
+    margin-top: -30px;
+    margin-bottom: 0px;
   }
 
   .editFormButtons .btn{
-    margin-left: 10px;
+    padding-top:5px;
+    padding-bottom: 5px;
     margin-right: 10px;
+  }
+
+  #wish-list {
+    max-width: 500px;
+    padding: 15px;
+    margin: auto;
+  }
+
+  #wish-list .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+  }
+
+  #srtbtns {
+    margin:10px;
+    text-align: center;
   }

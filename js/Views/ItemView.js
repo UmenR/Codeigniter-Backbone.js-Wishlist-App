@@ -18,13 +18,16 @@ app.ItemView = Backbone.View.extend({
     'click #removebtn': 'remove'
   },
   edit: function(){
-    this.$('#removebtn').hide();
-    this.$('#editbtn').hide();
-    this.$('#idsptitle').prop( "disabled", false );;
-    this.$('#dispopt').prop( "disabled", false );;
-    this.$('#dispprice').prop( "disabled", false );;
-    this.$('#dispurl').prop( "disabled", false );;
-    this.$('#savebtn').show();
+    if(app.canEdit){
+      app.canEdit = false;
+      this.$('#removebtn').hide();
+      this.$('#editbtn').hide();
+      this.$('#idsptitle').prop( "disabled", false );;
+      this.$('#dispopt').prop( "disabled", false );;
+      this.$('#dispprice').prop( "disabled", false );;
+      this.$('#dispurl').prop( "disabled", false );;
+      this.$('#savebtn').show();
+    }
   },
   updateOnEnter: function(e){
         e.preventDefault();
